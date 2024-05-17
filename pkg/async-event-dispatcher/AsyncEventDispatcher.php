@@ -2,56 +2,17 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-class AsyncEventDispatcher extends EventDispatcher
+class AsyncEventDispatcher extends AbstractAsyncEventDispatcher
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $trueEventDispatcher;
-
-    /**
-     * @var AsyncListener
-     */
-    private $asyncListener;
-
-    /**
-     * @param EventDispatcherInterface $trueEventDispatcher
-     * @param AsyncListener            $asyncListener
-     */
-    public function __construct(EventDispatcherInterface $trueEventDispatcher, AsyncListener $asyncListener)
+    public function dispatch(object $event, string $eventName = null): object
     {
-        $this->trueEventDispatcher = $trueEventDispatcher;
-        $this->asyncListener = $asyncListener;
+        $this->parentDispatch($event, $eventName);
+
+        return $this->trueEventDispatcher->dispatch($event, $eventName);
     }
 
-    /**
-     * This method dispatches only those listeners that were marked as async.
-     *
-     * @param string     $eventName
-     * @param Event|null $event
-     */
-    public function dispatchAsyncListenersOnly($eventName, Event $event = null)
+    protected function parentDispatch($event, $eventName)
     {
-        try {
-            $this->asyncListener->syncMode($eventName);
-
-            parent::dispatch($eventName, $event);
-        } finally {
-            $this->asyncListener->resetSyncMode();
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function dispatch($eventName, Event $event = null)
-    {
-        parent::dispatch($eventName, $event);
-
-        $this->trueEventDispatcher->dispatch($eventName, $event);
+        return parent::dispatch($event, $eventName);
     }
 }

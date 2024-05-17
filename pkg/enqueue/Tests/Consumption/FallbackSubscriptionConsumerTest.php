@@ -3,6 +3,7 @@
 namespace Enqueue\Tests\Consumption;
 
 use Enqueue\Consumption\FallbackSubscriptionConsumer;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Queue as InteropQueue;
@@ -11,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 
 class FallbackSubscriptionConsumerTest extends TestCase
 {
+    use ReadAttributeTrait;
+
     public function testShouldImplementSubscriptionConsumerInterface()
     {
         $rc = new \ReflectionClass(FallbackSubscriptionConsumer::class);
@@ -229,7 +232,7 @@ class FallbackSubscriptionConsumerTest extends TestCase
     /**
      * @param mixed|null $body
      *
-     * @return InteropMessage|\PHPUnit_Framework_MockObject_MockObject
+     * @return InteropMessage|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createMessageStub($body = null)
     {
@@ -246,7 +249,7 @@ class FallbackSubscriptionConsumerTest extends TestCase
     /**
      * @param mixed|null $queueName
      *
-     * @return Consumer|\PHPUnit_Framework_MockObject_MockObject
+     * @return Consumer|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createConsumerStub($queueName = null)
     {

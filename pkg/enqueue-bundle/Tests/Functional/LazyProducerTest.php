@@ -11,13 +11,13 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class LazyProducerTest extends WebTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         // do not call parent::setUp.
         // parent::setUp();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         if (static::$kernel) {
             $fs = new Filesystem();
@@ -47,10 +47,7 @@ class LazyProducerTest extends WebTestCase
         $producer->sendEvent('foo', 'foo');
     }
 
-    /**
-     * @return string
-     */
-    public static function getKernelClass()
+    public static function getKernelClass(): string
     {
         include_once __DIR__.'/App/CustomAppKernel.php';
 

@@ -66,6 +66,11 @@ class RdKafkaConsumer implements Consumer
         $this->commitAsync = $async;
     }
 
+    public function getOffset(): ?int
+    {
+        return $this->offset;
+    }
+
     public function setOffset(int $offset = null): void
     {
         if ($this->subscribed) {
@@ -75,6 +80,9 @@ class RdKafkaConsumer implements Consumer
         $this->offset = $offset;
     }
 
+    /**
+     * @return RdKafkaTopic
+     */
     public function getQueue(): Queue
     {
         return $this->topic;
@@ -161,6 +169,7 @@ class RdKafkaConsumer implements Consumer
         switch ($kafkaMessage->err) {
             case RD_KAFKA_RESP_ERR__PARTITION_EOF:
             case RD_KAFKA_RESP_ERR__TIMED_OUT:
+            case RD_KAFKA_RESP_ERR__TRANSPORT:
                 return null;
             case RD_KAFKA_RESP_ERR_NO_ERROR:
                 $message = $this->serializer->toMessage($kafkaMessage->payload);

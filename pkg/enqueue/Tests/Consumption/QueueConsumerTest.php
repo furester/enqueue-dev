@@ -21,6 +21,7 @@ use Enqueue\Consumption\ExtensionInterface;
 use Enqueue\Consumption\QueueConsumer;
 use Enqueue\Consumption\Result;
 use Enqueue\Null\NullQueue;
+use Enqueue\Test\ReadAttributeTrait;
 use Enqueue\Tests\Consumption\Mock\BreakCycleExtension;
 use Enqueue\Tests\Consumption\Mock\DummySubscriptionConsumer;
 use Interop\Queue\Consumer;
@@ -36,6 +37,8 @@ use Psr\Log\NullLogger;
 
 class QueueConsumerTest extends TestCase
 {
+    use ReadAttributeTrait;
+
     public function testCouldBeConstructedWithAllArguments()
     {
         new QueueConsumer($this->createContextStub(), null, [], null, 0);
@@ -177,7 +180,7 @@ class QueueConsumerTest extends TestCase
 
         $boundProcessors = $this->readAttribute($consumer, 'boundProcessors');
 
-        $this->assertInternalType('array', $boundProcessors);
+        self::assertIsArray($boundProcessors);
         $this->assertCount(1, $boundProcessors);
         $this->assertArrayHasKey($queueName, $boundProcessors);
 
@@ -203,7 +206,6 @@ class QueueConsumerTest extends TestCase
         $contextSubscriptionConsumer
             ->expects($this->once())
             ->method('consume')
-            ->willReturn(null)
         ;
 
         $fallbackSubscriptionConsumer = $this->createSubscriptionConsumerMock();
@@ -251,7 +253,6 @@ class QueueConsumerTest extends TestCase
         $fallbackSubscriptionConsumer
             ->expects($this->once())
             ->method('consume')
-            ->willReturn(null)
         ;
 
         $contextMock = $this->createContextWithoutSubscriptionConsumerMock();
@@ -288,7 +289,6 @@ class QueueConsumerTest extends TestCase
             ->expects($this->once())
             ->method('consume')
             ->with(12345)
-            ->willReturn(null)
         ;
 
         $contextMock = $this->createContextWithoutSubscriptionConsumerMock();
@@ -319,7 +319,6 @@ class QueueConsumerTest extends TestCase
         $subscriptionConsumerMock
             ->expects($this->exactly(5))
             ->method('consume')
-            ->willReturn(null)
         ;
 
         $contextMock = $this->createContextWithoutSubscriptionConsumerMock();
@@ -1454,7 +1453,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createContextWithoutSubscriptionConsumerMock(): InteropContext
     {
@@ -1469,7 +1468,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|InteropContext
      */
     private function createContextStub(Consumer $consumer = null): InteropContext
     {
@@ -1493,7 +1492,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     * @return \PHPUnit\Framework\MockObject\MockObject|Processor
      */
     private function createProcessorMock()
     {
@@ -1501,7 +1500,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Processor
+     * @return \PHPUnit\Framework\MockObject\MockObject|Processor
      */
     private function createProcessorStub()
     {
@@ -1516,7 +1515,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Message
+     * @return \PHPUnit\Framework\MockObject\MockObject|Message
      */
     private function createMessageMock(): Message
     {
@@ -1524,7 +1523,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ExtensionInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ExtensionInterface
      */
     private function createExtension()
     {
@@ -1534,10 +1533,13 @@ class QueueConsumerTest extends TestCase
     /**
      * @param mixed|null $queue
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
+     * @return \PHPUnit\Framework\MockObject\MockObject|Consumer
      */
     private function createConsumerStub($queue = null): Consumer
     {
+        if (null === $queue) {
+            $queue = 'queue';
+        }
         if (is_string($queue)) {
             $queue = new NullQueue($queue);
         }
@@ -1553,7 +1555,7 @@ class QueueConsumerTest extends TestCase
     }
 
     /**
-     * @return SubscriptionConsumer|\PHPUnit_Framework_MockObject_MockObject
+     * @return SubscriptionConsumer|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createSubscriptionConsumerMock(): SubscriptionConsumer
     {

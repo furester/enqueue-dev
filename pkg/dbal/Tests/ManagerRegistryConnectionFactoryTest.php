@@ -2,17 +2,20 @@
 
 namespace Enqueue\Dbal\Tests;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\ConnectionFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ManagerRegistryConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementConnectionFactoryInterface()
     {
@@ -70,11 +73,11 @@ class ManagerRegistryConnectionFactoryTest extends TestCase
         $this->assertInstanceOf(DbalContext::class, $context);
 
         $this->assertAttributeEquals(null, 'connection', $context);
-        $this->assertAttributeInternalType('callable', 'connectionFactory', $context);
+        $this->assertIsCallable($this->readAttribute($context, 'connectionFactory'));
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @return MockObject|ManagerRegistry
      */
     private function createManagerRegistryMock()
     {
@@ -82,7 +85,7 @@ class ManagerRegistryConnectionFactoryTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Connection
+     * @return MockObject|Connection
      */
     private function createConnectionMock()
     {

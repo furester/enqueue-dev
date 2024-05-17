@@ -3,10 +3,12 @@
 namespace Enqueue\Stomp\Tests;
 
 use Enqueue\Stomp\BufferedStompClient;
+use Enqueue\Stomp\ExtensionType;
 use Enqueue\Stomp\StompConsumer;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use Interop\Queue\Message;
@@ -16,6 +18,7 @@ use Stomp\Transport\Frame;
 class StompConsumerTest extends \PHPUnit\Framework\TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementMessageConsumerInterface()
     {
@@ -520,8 +523,8 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
         $fooConsumer = new StompConsumer($this->createStompClientMock(), $destination);
         $barConsumer = new StompConsumer($this->createStompClientMock(), $destination);
 
-        $this->assertAttributeNotEmpty('subscriptionId', $fooConsumer);
-        $this->assertAttributeNotEmpty('subscriptionId', $barConsumer);
+        $this->assertNotEmpty($this->readAttribute($fooConsumer, 'subscriptionId'));
+        $this->assertNotEmpty($this->readAttribute($barConsumer, 'subscriptionId'));
 
         $fooSubscriptionId = $this->readAttribute($fooConsumer, 'subscriptionId');
         $barSubscriptionId = $this->readAttribute($barConsumer, 'subscriptionId');
@@ -540,7 +543,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Protocol
+     * @return \PHPUnit\Framework\MockObject\MockObject|Protocol
      */
     private function createStompProtocolMock()
     {
@@ -548,7 +551,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|BufferedStompClient
+     * @return \PHPUnit\Framework\MockObject\MockObject|BufferedStompClient
      */
     private function createStompClientMock()
     {
@@ -557,7 +560,7 @@ class StompConsumerTest extends \PHPUnit\Framework\TestCase
 
     private function createDummyDestination(): StompDestination
     {
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setStompName('aName');
         $destination->setType(StompDestination::TYPE_QUEUE);
 

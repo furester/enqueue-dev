@@ -16,8 +16,7 @@ class SqsClientTest extends TestCase
         $awsClient = (new Sdk(['Sqs' => [
             'key' => '',
             'secret' => '',
-            'token' => '',
-            'region' => '',
+            'region' => 'us-west-2',
             'version' => '2012-11-05',
             'endpoint' => 'http://localhost',
         ]]))->createSqs();
@@ -32,8 +31,7 @@ class SqsClientTest extends TestCase
         $awsClient = (new Sdk(['Sqs' => [
             'key' => '',
             'secret' => '',
-            'token' => '',
-            'region' => '',
+            'region' => 'us-west-2',
             'version' => '2012-11-05',
             'endpoint' => 'http://localhost',
         ]]))->createMultiRegionSqs();

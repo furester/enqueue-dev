@@ -5,6 +5,7 @@ namespace Enqueue\Redis\Tests;
 use Enqueue\Redis\RedisConsumer;
 use Enqueue\Redis\RedisContext;
 use Enqueue\Redis\RedisSubscriptionConsumer;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Queue;
 use Interop\Queue\SubscriptionConsumer;
@@ -12,6 +13,8 @@ use PHPUnit\Framework\TestCase;
 
 class RedisSubscriptionConsumerTest extends TestCase
 {
+    use ReadAttributeTrait;
+
     public function testShouldImplementSubscriptionConsumerInterface()
     {
         $rc = new \ReflectionClass(RedisSubscriptionConsumer::class);
@@ -142,7 +145,7 @@ class RedisSubscriptionConsumerTest extends TestCase
     }
 
     /**
-     * @return RedisContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return RedisContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createRedisContextMock()
     {
@@ -152,7 +155,7 @@ class RedisSubscriptionConsumerTest extends TestCase
     /**
      * @param mixed|null $queueName
      *
-     * @return Consumer|\PHPUnit_Framework_MockObject_MockObject
+     * @return Consumer|\PHPUnit\Framework\MockObject\MockObject
      */
     private function createConsumerStub($queueName = null)
     {

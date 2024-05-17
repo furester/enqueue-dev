@@ -18,7 +18,7 @@ abstract class WebTestCase extends BaseWebTestCase
      */
     protected static $container;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -33,17 +33,14 @@ abstract class WebTestCase extends BaseWebTestCase
         $this->startTransaction();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->rollbackTransaction();
-
         parent::tearDown();
+        static::ensureKernelShutdown();
     }
 
-    /**
-     * @return string
-     */
-    public static function getKernelClass()
+    public static function getKernelClass(): string
     {
         require_once __DIR__.'/app/AppKernel.php';
 

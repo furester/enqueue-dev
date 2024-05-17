@@ -7,16 +7,18 @@ use Enqueue\Consumption\Extension\ExitStatusExtension;
 use Enqueue\Consumption\QueueConsumerInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand('enqueue:transport:consume')]
 class ConsumeCommand extends Command
 {
+    use ChooseLoggerCommandTrait;
     use LimitsExtensionsCommandTrait;
     use QueueConsumerOptionsCommandTrait;
-    use ChooseLoggerCommandTrait;
 
     protected static $defaultName = 'enqueue:transport:consume';
 
@@ -57,7 +59,7 @@ class ConsumeCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $transport = $input->getOption('transport');
 
@@ -81,7 +83,7 @@ class ConsumeCommand extends Command
 
         $consumer->consume(new ChainExtension($extensions));
 
-        return $exitStatusExtension->getExitStatus();
+        return $exitStatusExtension->getExitStatus() ?? 0;
     }
 
     private function getQueueConsumer(string $name): QueueConsumerInterface

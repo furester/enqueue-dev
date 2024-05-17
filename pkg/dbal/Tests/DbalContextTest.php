@@ -9,15 +9,18 @@ use Enqueue\Dbal\DbalDestination;
 use Enqueue\Dbal\DbalMessage;
 use Enqueue\Dbal\DbalProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Context;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\TemporaryQueueNotSupportedException;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DbalContextTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementContextInterface()
     {
@@ -36,6 +39,7 @@ class DbalContextTest extends TestCase
         $this->assertAttributeEquals([
             'table_name' => 'enqueue',
             'polling_interval' => null,
+            'subscription_polling_interval' => null,
         ], 'config', $factory);
     }
 
@@ -44,11 +48,13 @@ class DbalContextTest extends TestCase
         $factory = new DbalContext($this->createConnectionMock(), [
             'table_name' => 'theTableName',
             'polling_interval' => 12345,
+            'subscription_polling_interval' => 12345,
         ]);
 
         $this->assertAttributeEquals([
             'table_name' => 'theTableName',
             'polling_interval' => 12345,
+            'subscription_polling_interval' => 12345,
         ], 'config', $factory);
     }
 
@@ -162,7 +168,7 @@ class DbalContextTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Connection
+     * @return MockObject|Connection
      */
     private function createConnectionMock()
     {

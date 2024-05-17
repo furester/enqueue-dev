@@ -3,15 +3,17 @@
 namespace Enqueue\Bundle\Tests\Unit\Consumption\Extension;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\Bundle\Consumption\Extension\DoctrinePingConnectionExtension;
 use Enqueue\Consumption\Context\MessageReceived;
+use Enqueue\Test\TestLogger;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Message;
 use Interop\Queue\Processor;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class DoctrinePingConnectionExtensionTest extends TestCase
 {
@@ -28,10 +30,17 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             ->method('isConnected')
             ->willReturn(true)
         ;
+
+        $abstractPlatform = $this->createMock(AbstractPlatform::class);
+        $abstractPlatform->expects($this->once())
+            ->method('getDummySelectSQL')
+            ->willReturn('dummy')
+        ;
+
         $connection
             ->expects($this->once())
-            ->method('ping')
-            ->willReturn(true)
+            ->method('getDatabasePlatform')
+            ->willReturn($abstractPlatform)
         ;
         $connection
             ->expects($this->never())
@@ -43,20 +52,20 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         ;
 
         $context = $this->createContext();
-        $context->getLogger()
-            ->expects($this->never())
-            ->method('debug')
-        ;
 
         $registry = $this->createRegistryMock();
         $registry
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getConnections')
             ->willReturn([$connection])
         ;
 
         $extension = new DoctrinePingConnectionExtension($registry);
         $extension->onMessageReceived($context);
+
+        /** @var TestLogger $logger */
+        $logger = $context->getLogger();
+        self::assertFalse($logger->hasDebugRecords());
     }
 
     public function testShouldDoesReconnectIfConnectionFailed()
@@ -67,10 +76,11 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             ->method('isConnected')
             ->willReturn(true)
         ;
+
         $connection
             ->expects($this->once())
-            ->method('ping')
-            ->willReturn(false)
+            ->method('getDatabasePlatform')
+            ->willThrowException(new \Exception())
         ;
         $connection
             ->expects($this->once())
@@ -82,16 +92,6 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         ;
 
         $context = $this->createContext();
-        $context->getLogger()
-            ->expects($this->at(0))
-            ->method('debug')
-            ->with('[DoctrinePingConnectionExtension] Connection is not active trying to reconnect.')
-        ;
-        $context->getLogger()
-            ->expects($this->at(1))
-            ->method('debug')
-            ->with('[DoctrinePingConnectionExtension] Connection is active now.')
-        ;
 
         $registry = $this->createRegistryMock();
         $registry
@@ -102,6 +102,19 @@ class DoctrinePingConnectionExtensionTest extends TestCase
 
         $extension = new DoctrinePingConnectionExtension($registry);
         $extension->onMessageReceived($context);
+
+        /** @var TestLogger $logger */
+        $logger = $context->getLogger();
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[DoctrinePingConnectionExtension] Connection is not active trying to reconnect.'
+            )
+        );
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[DoctrinePingConnectionExtension] Connection is active now.'
+            )
+        );
     }
 
     public function testShouldSkipIfConnectionWasNotOpened()
@@ -114,7 +127,7 @@ class DoctrinePingConnectionExtensionTest extends TestCase
         ;
         $connection1
             ->expects($this->never())
-            ->method('ping')
+            ->method('getDatabasePlatform')
         ;
 
         // 2nd connection was opened in the past
@@ -124,17 +137,19 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             ->method('isConnected')
             ->willReturn(true)
         ;
+        $abstractPlatform = $this->createMock(AbstractPlatform::class);
+        $abstractPlatform->expects($this->once())
+            ->method('getDummySelectSQL')
+            ->willReturn('dummy')
+        ;
+
         $connection2
             ->expects($this->once())
-            ->method('ping')
-            ->willReturn(true)
+            ->method('getDatabasePlatform')
+            ->willReturn($abstractPlatform)
         ;
 
         $context = $this->createContext();
-        $context->getLogger()
-            ->expects($this->never())
-            ->method('debug')
-        ;
 
         $registry = $this->createRegistryMock();
         $registry
@@ -145,6 +160,10 @@ class DoctrinePingConnectionExtensionTest extends TestCase
 
         $extension = new DoctrinePingConnectionExtension($registry);
         $extension->onMessageReceived($context);
+
+        /** @var TestLogger $logger */
+        $logger = $context->getLogger();
+        $this->assertFalse($logger->hasDebugRecords());
     }
 
     protected function createContext(): MessageReceived
@@ -155,20 +174,20 @@ class DoctrinePingConnectionExtensionTest extends TestCase
             $this->createMock(Message::class),
             $this->createMock(Processor::class),
             1,
-            $this->createMock(LoggerInterface::class)
+            new TestLogger()
         );
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RegistryInterface
+     * @return MockObject|ManagerRegistry
      */
-    protected function createRegistryMock(): RegistryInterface
+    protected function createRegistryMock()
     {
-        return $this->createMock(RegistryInterface::class);
+        return $this->createMock(ManagerRegistry::class);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Connection
+     * @return MockObject|Connection
      */
     protected function createConnectionMock(): Connection
     {

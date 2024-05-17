@@ -16,8 +16,7 @@ class SnsClientTest extends TestCase
         $awsClient = (new Sdk(['Sns' => [
             'key' => '',
             'secret' => '',
-            'token' => '',
-            'region' => '',
+            'region' => 'us-west-2',
             'version' => '2010-03-31',
             'endpoint' => 'http://localhost',
         ]]))->createSns();
@@ -32,8 +31,7 @@ class SnsClientTest extends TestCase
         $awsClient = (new Sdk(['Sns' => [
             'key' => '',
             'secret' => '',
-            'token' => '',
-            'region' => '',
+            'region' => 'us-west-2',
             'version' => '2010-03-31',
             'endpoint' => 'http://localhost',
         ]]))->createMultiRegionSns();

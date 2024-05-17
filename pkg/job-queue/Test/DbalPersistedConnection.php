@@ -33,7 +33,6 @@ class DbalPersistedConnection extends Connection
 
         if ($this->hasPersistedConnection()) {
             $this->_conn = $this->getPersistedConnection();
-            $this->setConnected(true);
         } else {
             parent::connect();
             $this->persistConnection($this->_conn);
@@ -67,22 +66,6 @@ class DbalPersistedConnection extends Connection
     }
 
     /**
-     * @param bool $connected
-     */
-    protected function setConnected($connected)
-    {
-        $rc = new \ReflectionClass(Connection::class);
-        $rp = $rc->hasProperty('isConnected') ?
-            $rc->getProperty('isConnected') :
-            $rc->getProperty('_isConnected')
-        ;
-
-        $rp->setAccessible(true);
-        $rp->setValue($this, $connected);
-        $rp->setAccessible(false);
-    }
-
-    /**
      * @return int
      */
     protected function getPersistedTransactionNestingLevel()
@@ -102,9 +85,6 @@ class DbalPersistedConnection extends Connection
         static::$persistedTransactionNestingLevels[$this->getConnectionId()] = $level;
     }
 
-    /**
-     * @param DriverConnection $connection
-     */
     protected function persistConnection(DriverConnection $connection)
     {
         static::$persistedConnections[$this->getConnectionId()] = $connection;

@@ -8,17 +8,19 @@ use Enqueue\Consumption\QueueSubscriberInterface;
 use Enqueue\ProcessorRegistryInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand('enqueue:transport:consume')]
 class ConfigurableConsumeCommand extends Command
 {
+    use ChooseLoggerCommandTrait;
     use LimitsExtensionsCommandTrait;
     use QueueConsumerOptionsCommandTrait;
-    use ChooseLoggerCommandTrait;
 
     protected static $defaultName = 'enqueue:transport:consume';
 
@@ -72,7 +74,7 @@ class ConfigurableConsumeCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $transport = $input->getOption('transport');
 
@@ -92,10 +94,7 @@ class ConfigurableConsumeCommand extends Command
         }
 
         if (empty($queues)) {
-            throw new \LogicException(sprintf(
-                'The queue is not provided. The processor must implement "%s" interface and it must return not empty array of queues or a queue set using as a second argument.',
-                QueueSubscriberInterface::class
-            ));
+            throw new \LogicException(sprintf('The queue is not provided. The processor must implement "%s" interface and it must return not empty array of queues or a queue set using as a second argument.', QueueSubscriberInterface::class));
         }
 
         $extensions = $this->getLimitsExtensions($input, $output);
@@ -110,7 +109,7 @@ class ConfigurableConsumeCommand extends Command
 
         $consumer->consume(new ChainExtension($extensions));
 
-        return null;
+        return 0;
     }
 
     private function getQueueConsumer(string $name): QueueConsumerInterface

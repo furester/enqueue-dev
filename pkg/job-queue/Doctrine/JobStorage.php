@@ -2,12 +2,12 @@
 
 namespace Enqueue\JobQueue\Doctrine;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\JobQueue\DuplicateJobException;
 use Enqueue\JobQueue\Job;
 
@@ -39,9 +39,8 @@ class JobStorage
     private $uniqueTableName;
 
     /**
-     * @param ManagerRegistry $doctrine
-     * @param string          $entityClass
-     * @param string          $uniqueTableName
+     * @param string $entityClass
+     * @param string $uniqueTableName
      */
     public function __construct(ManagerRegistry $doctrine, $entityClass, $uniqueTableName)
     {
@@ -59,13 +58,18 @@ class JobStorage
     {
         $qb = $this->getEntityRepository()->createQueryBuilder('job');
 
-        return $qb
+        $job = $qb
             ->addSelect('rootJob')
             ->leftJoin('job.rootJob', 'rootJob')
             ->where('job = :id')
             ->setParameter('id', $id)
             ->getQuery()->getOneOrNullResult()
         ;
+        if ($job) {
+            $this->refreshJobEntity($job);
+        }
+
+        return $job;
     }
 
     /**
@@ -90,7 +94,6 @@ class JobStorage
 
     /**
      * @param string $name
-     * @param Job    $rootJob
      *
      * @return Job
      */
@@ -119,20 +122,13 @@ class JobStorage
     }
 
     /**
-     * @param Job           $job
-     * @param \Closure|null $lockCallback
-     *
      * @throws DuplicateJobException
      */
     public function saveJob(Job $job, \Closure $lockCallback = null)
     {
         $class = $this->getEntityRepository()->getClassName();
         if (!$job instanceof $class) {
-            throw new \LogicException(sprintf(
-                'Got unexpected job instance: expected: "%s", actual" "%s"',
-                $class,
-                get_class($job)
-            ));
+            throw new \LogicException(sprintf('Got unexpected job instance: expected: "%s", actual" "%s"', $class, get_class($job)));
         }
 
         if ($lockCallback) {
@@ -175,11 +171,7 @@ class JobStorage
                             ]);
                         }
                     } catch (UniqueConstraintViolationException $e) {
-                        throw new DuplicateJobException(sprintf(
-                            'Duplicate job. ownerId:"%s", name:"%s"',
-                            $job->getOwnerId(),
-                            $job->getName()
-                        ));
+                        throw new DuplicateJobException(sprintf('Duplicate job. ownerId:"%s", name:"%s"', $job->getOwnerId(), $job->getName()));
                     }
 
                     $this->getEntityManager()->persist($job);
@@ -190,6 +182,14 @@ class JobStorage
                 $this->getEntityManager()->flush();
             }
         }
+    }
+
+    /**
+     * @param Job $job
+     */
+    public function refreshJobEntity($job)
+    {
+        $this->getEntityManager()->refresh($job);
     }
 
     /**

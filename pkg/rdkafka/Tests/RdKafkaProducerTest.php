@@ -15,9 +15,6 @@ use RdKafka\Producer;
 use RdKafka\ProducerTopic;
 use RdKafka\TopicConf;
 
-/**
- * @group rdkafka
- */
 class RdKafkaProducerTest extends TestCase
 {
     public function testCouldBeConstructedWithKafkaProducerAndSerializerAsArguments()
@@ -69,6 +66,11 @@ class RdKafkaProducerTest extends TestCase
             ->with('theQueueName')
             ->willReturn($kafkaTopic)
         ;
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('poll')
+            ->with(0)
+        ;
 
         $serializer = $this->createSerializerMock();
         $serializer
@@ -98,6 +100,11 @@ class RdKafkaProducerTest extends TestCase
             ->method('newTopic')
             ->with('theQueueName', null)
             ->willReturn($kafkaTopic)
+        ;
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('poll')
+            ->with(0)
         ;
 
         $serializer = $this->createSerializerMock();
@@ -135,6 +142,11 @@ class RdKafkaProducerTest extends TestCase
             ->with('theQueueName', $this->identicalTo($conf))
             ->willReturn($kafkaTopic)
         ;
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('poll')
+            ->with(0)
+        ;
 
         $serializer = $this->createSerializerMock();
         $serializer
@@ -157,7 +169,7 @@ class RdKafkaProducerTest extends TestCase
 
         $expectedSerializer = $this->createSerializerMock();
 
-        //guard
+        // guard
         $this->assertNotSame($producer->getSerializer(), $expectedSerializer);
 
         $producer->setSerializer($expectedSerializer);
@@ -189,6 +201,11 @@ class RdKafkaProducerTest extends TestCase
             ->method('newTopic')
             ->willReturn($kafkaTopic)
         ;
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('poll')
+            ->with(0)
+        ;
 
         $serializer = $this->createSerializerMock();
         $serializer
@@ -205,8 +222,166 @@ class RdKafkaProducerTest extends TestCase
         $producer->send(new RdKafkaTopic('theQueueName'), $message);
     }
 
+    public function testShouldGetPartitionFromMessage(): void
+    {
+        $partition = 1;
+
+        $kafkaTopic = $this->createKafkaTopicMock();
+        $kafkaTopic
+            ->expects($this->once())
+            ->method('producev')
+            ->with(
+                $partition,
+                0,
+                'theSerializedMessage',
+                'theSerializedKey'
+            )
+        ;
+
+        $kafkaProducer = $this->createKafkaProducerMock();
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('newTopic')
+            ->willReturn($kafkaTopic)
+        ;
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('poll')
+            ->with(0)
+        ;
+        $messageHeaders = ['bar' => 'barVal'];
+        $message = new RdKafkaMessage('theBody', ['foo' => 'fooVal'], $messageHeaders);
+        $message->setKey('key');
+        $message->setPartition($partition);
+
+        $serializer = $this->createSerializerMock();
+        $serializer
+            ->expects($this->once())
+            ->method('toString')
+            ->willReturnCallback(function () use ($message) {
+                $message->setKey('theSerializedKey');
+
+                return 'theSerializedMessage';
+            })
+        ;
+
+        $destination = new RdKafkaTopic('theQueueName');
+
+        $producer = new RdKafkaProducer($kafkaProducer, $serializer);
+        $producer->send($destination, $message);
+    }
+
+    public function testShouldGetPartitionFromDestination(): void
+    {
+        $partition = 2;
+
+        $kafkaTopic = $this->createKafkaTopicMock();
+        $kafkaTopic
+            ->expects($this->once())
+            ->method('producev')
+            ->with(
+                $partition,
+                0,
+                'theSerializedMessage',
+                'theSerializedKey'
+            )
+        ;
+
+        $kafkaProducer = $this->createKafkaProducerMock();
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('newTopic')
+            ->willReturn($kafkaTopic)
+        ;
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('poll')
+            ->with(0)
+        ;
+        $messageHeaders = ['bar' => 'barVal'];
+        $message = new RdKafkaMessage('theBody', ['foo' => 'fooVal'], $messageHeaders);
+        $message->setKey('key');
+
+        $serializer = $this->createSerializerMock();
+        $serializer
+            ->expects($this->once())
+            ->method('toString')
+            ->willReturnCallback(function () use ($message) {
+                $message->setKey('theSerializedKey');
+
+                return 'theSerializedMessage';
+            })
+        ;
+
+        $destination = new RdKafkaTopic('theQueueName');
+        $destination->setPartition($partition);
+
+        $producer = new RdKafkaProducer($kafkaProducer, $serializer);
+        $producer->send($destination, $message);
+    }
+
+    public function testShouldAllowFalsyKeyFromMessage(): void
+    {
+        $key = 0;
+
+        $kafkaTopic = $this->createKafkaTopicMock();
+        $kafkaTopic
+            ->expects($this->once())
+            ->method('producev')
+            ->with(
+                RD_KAFKA_PARTITION_UA,
+                0,
+                '',
+                $key
+            )
+        ;
+
+        $kafkaProducer = $this->createKafkaProducerMock();
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('newTopic')
+            ->willReturn($kafkaTopic)
+        ;
+
+        $message = new RdKafkaMessage();
+        $message->setKey($key);
+
+        $producer = new RdKafkaProducer($kafkaProducer, $this->createSerializerMock());
+        $producer->send(new RdKafkaTopic(''), $message);
+    }
+
+    public function testShouldAllowFalsyKeyFromDestination(): void
+    {
+        $key = 0;
+
+        $kafkaTopic = $this->createKafkaTopicMock();
+        $kafkaTopic
+            ->expects($this->once())
+            ->method('producev')
+            ->with(
+                RD_KAFKA_PARTITION_UA,
+                0,
+                '',
+                $key
+            )
+        ;
+
+        $kafkaProducer = $this->createKafkaProducerMock();
+        $kafkaProducer
+            ->expects($this->once())
+            ->method('newTopic')
+            ->willReturn($kafkaTopic)
+        ;
+
+        $destination = new RdKafkaTopic('');
+        $destination->setKey($key);
+
+        $producer = new RdKafkaProducer($kafkaProducer, $this->createSerializerMock());
+        $producer->send($destination, new RdKafkaMessage());
+    }
+
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProducerTopic
+     * @return \PHPUnit\Framework\MockObject\MockObject|ProducerTopic
      */
     private function createKafkaTopicMock()
     {
@@ -214,7 +389,7 @@ class RdKafkaProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Producer
+     * @return \PHPUnit\Framework\MockObject\MockObject|Producer
      */
     private function createKafkaProducerMock()
     {
@@ -222,7 +397,7 @@ class RdKafkaProducerTest extends TestCase
     }
 
     /**
-     * @return Serializer|\PHPUnit_Framework_MockObject_MockObject|Serializer
+     * @return Serializer|\PHPUnit\Framework\MockObject\MockObject|Serializer
      */
     private function createSerializerMock()
     {

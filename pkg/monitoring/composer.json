@@ -6,18 +6,18 @@
     "homepage": "https://enqueue.forma-pro.com/",
     "license": "MIT",
     "require": {
-        "php": "^7.1.3",
-        "enqueue/enqueue": "^0.9",
-        "ramsey/uuid": "^3",
-        "enqueue/dsn": "^0.9"
+        "php": "^7.4|^8.0",
+        "enqueue/enqueue": "^0.10",
+        "enqueue/dsn": "^0.10"
     },
     "require-dev": {
-        "phpunit/phpunit": "~5.4.0",
-        "enqueue/test": "0.9.x-dev",
+        "phpunit/phpunit": "^9.5",
+        "enqueue/test": "0.10.x-dev",
         "influxdb/influxdb-php": "^1.14",
         "datadog/php-datadogstatsd": "^1.3",
-        "thruway/client": "^0.5",
-        "thruway/pawl-transport": "^0.5"
+        "thruway/client": "^0.5.5",
+        "thruway/pawl-transport": "^0.5",
+        "voryx/thruway-common": "^1.0.1"
     },
     "suggest": {
         "thruway/client": "Client for Thruway and the WAMP (Web Application Messaging Protocol).",
@@ -41,7 +41,7 @@
     "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
-            "dev-master": "0.9.x-dev"
+            "dev-master": "0.10.x-dev"
         }
     }
 }

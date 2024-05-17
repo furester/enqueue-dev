@@ -7,12 +7,14 @@ use Enqueue\Sns\SnsClient;
 use Enqueue\Sns\SnsConnectionFactory;
 use Enqueue\Sns\SnsContext;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\ConnectionFactory;
 use PHPUnit\Framework\TestCase;
 
 class SnsConnectionFactoryTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementConnectionFactoryInterface()
     {
@@ -31,6 +33,8 @@ class SnsConnectionFactoryTest extends TestCase
             'region' => null,
             'version' => '2010-03-31',
             'endpoint' => null,
+            'topic_arns' => [],
+            'http' => [],
         ], 'config', $factory);
     }
 
@@ -46,6 +50,8 @@ class SnsConnectionFactoryTest extends TestCase
             'region' => null,
             'version' => '2010-03-31',
             'endpoint' => null,
+            'topic_arns' => [],
+            'http' => [],
         ], 'config', $factory);
     }
 

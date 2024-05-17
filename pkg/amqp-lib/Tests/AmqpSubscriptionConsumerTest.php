@@ -5,6 +5,7 @@ namespace Enqueue\AmqpLib\Tests;
 use Enqueue\AmqpLib\AmqpContext;
 use Enqueue\AmqpLib\AmqpSubscriptionConsumer;
 use Interop\Queue\SubscriptionConsumer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AmqpSubscriptionConsumerTest extends TestCase
@@ -18,11 +19,14 @@ class AmqpSubscriptionConsumerTest extends TestCase
 
     public function testCouldBeConstructedWithAmqpContextAndHeartbeatOnTickAsArguments()
     {
-        new AmqpSubscriptionConsumer($this->createAmqpContextMock(), $heartbeatOnTick = true);
+        self::assertInstanceOf(
+            AmqpSubscriptionConsumer::class,
+            new AmqpSubscriptionConsumer($this->createAmqpContextMock(), $heartbeatOnTick = true)
+        );
     }
 
     /**
-     * @return AmqpContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return AmqpContext|MockObject
      */
     private function createAmqpContextMock()
     {

@@ -12,17 +12,12 @@ class CalculateRootJobStatusService
      */
     private $jobStorage;
 
-    /**
-     * @param JobStorage $jobStorage
-     */
     public function __construct(JobStorage $jobStorage)
     {
         $this->jobStorage = $jobStorage;
     }
 
     /**
-     * @param Job $job
-     *
      * @return bool true if root job was stopped
      */
     public function calculate(Job $job)
@@ -74,6 +69,7 @@ class CalculateRootJobStatusService
         $success = 0;
 
         foreach ($jobs as $job) {
+            $this->jobStorage->refreshJobEntity($job);
             switch ($job->getStatus()) {
                 case Job::STATUS_NEW:
                     $new++;
@@ -91,11 +87,7 @@ class CalculateRootJobStatusService
                     $success++;
                     break;
                 default:
-                    throw new \LogicException(sprintf(
-                        'Got unsupported job status: id: "%s" status: "%s"',
-                        $job->getId(),
-                        $job->getStatus()
-                    ));
+                    throw new \LogicException(sprintf('Got unsupported job status: id: "%s" status: "%s"', $job->getId(), $job->getStatus()));
             }
         }
 

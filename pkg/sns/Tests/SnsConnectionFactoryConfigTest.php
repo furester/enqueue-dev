@@ -4,6 +4,7 @@ namespace Enqueue\Sns\Tests;
 
 use Enqueue\Sns\SnsConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 class SnsConnectionFactoryConfigTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {
@@ -62,6 +64,8 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => true,
                 'endpoint' => null,
+                'topic_arns' => [],
+                'http' => [],
             ],
         ];
 
@@ -75,6 +79,8 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => true,
                 'endpoint' => null,
+                'topic_arns' => [],
+                'http' => [],
             ],
         ];
 
@@ -88,6 +94,8 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => true,
                 'endpoint' => null,
+                'topic_arns' => [],
+                'http' => [],
             ],
         ];
 
@@ -101,6 +109,8 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => false,
                 'endpoint' => null,
+                'topic_arns' => [],
+                'http' => [],
             ],
         ];
 
@@ -114,6 +124,8 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => false,
                 'endpoint' => null,
+                'topic_arns' => [],
+                'http' => [],
             ],
         ];
 
@@ -127,6 +139,8 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => false,
                 'endpoint' => null,
+                'topic_arns' => [],
+                'http' => [],
             ],
         ];
 
@@ -146,6 +160,44 @@ class SnsConnectionFactoryConfigTest extends TestCase
                 'version' => '2010-03-31',
                 'lazy' => false,
                 'endpoint' => 'http://localstack:1111',
+                'topic_arns' => [],
+                'http' => [],
+            ],
+        ];
+
+        yield [
+            ['dsn' => 'sns:?topic_arns[topic1]=arn:aws:sns:us-east-1:123456789012:topic1&topic_arns[topic2]=arn:aws:sns:us-west-2:123456789012:topic2'],
+            [
+                'key' => null,
+                'secret' => null,
+                'token' => null,
+                'region' => null,
+                'version' => '2010-03-31',
+                'lazy' => true,
+                'endpoint' => null,
+                'topic_arns' => [
+                    'topic1' => 'arn:aws:sns:us-east-1:123456789012:topic1',
+                    'topic2' => 'arn:aws:sns:us-west-2:123456789012:topic2',
+                ],
+                'http' => [],
+            ],
+        ];
+
+        yield [
+            ['dsn' => 'sns:?http[timeout]=5&http[connect_timeout]=2'],
+            [
+                'key' => null,
+                'secret' => null,
+                'token' => null,
+                'region' => null,
+                'version' => '2010-03-31',
+                'lazy' => true,
+                'endpoint' => null,
+                'topic_arns' => [],
+                'http' => [
+                    'timeout' => '5',
+                    'connect_timeout' => '2',
+                ],
             ],
         ];
     }

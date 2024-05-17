@@ -12,6 +12,7 @@ use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidMessageException;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AmqpConsumerTest extends TestCase
@@ -26,9 +27,11 @@ class AmqpConsumerTest extends TestCase
 
     public function testCouldBeConstructedWithContextAndQueueAsArguments()
     {
-        new AmqpConsumer(
-            $this->createContextMock(),
-            new AmqpQueue('aName')
+        self::assertInstanceOf(AmqpConsumer::class,
+            new AmqpConsumer(
+                $this->createContextMock(),
+                new AmqpQueue('aName')
+            )
         );
     }
 
@@ -112,10 +115,7 @@ class AmqpConsumerTest extends TestCase
     public function testShouldReturnMessageOnReceiveNoWait()
     {
         $libMessage = new \PhpAmqpLib\Message\AMQPMessage('body');
-        $libMessage->delivery_info['delivery_tag'] = 'delivery-tag';
-        $libMessage->delivery_info['routing_key'] = 'routing-key';
-        $libMessage->delivery_info['redelivered'] = true;
-        $libMessage->delivery_info['routing_key'] = 'routing-key';
+        $libMessage->setDeliveryInfo('delivery-tag', true, '', 'routing-key');
 
         $message = new AmqpMessage();
 
@@ -149,9 +149,7 @@ class AmqpConsumerTest extends TestCase
     public function testShouldReturnMessageOnReceiveWithReceiveMethodBasicGet()
     {
         $libMessage = new \PhpAmqpLib\Message\AMQPMessage('body');
-        $libMessage->delivery_info['delivery_tag'] = 'delivery-tag';
-        $libMessage->delivery_info['routing_key'] = 'routing-key';
-        $libMessage->delivery_info['redelivered'] = true;
+        $libMessage->setDeliveryInfo('delivery-tag', true, '', 'routing-key');
 
         $message = new AmqpMessage();
 
@@ -183,7 +181,7 @@ class AmqpConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AmqpContext
+     * @return MockObject|AmqpContext
      */
     public function createContextMock()
     {
@@ -191,7 +189,7 @@ class AmqpConsumerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AMQPChannel
+     * @return MockObject|AMQPChannel
      */
     public function createLibChannelMock()
     {

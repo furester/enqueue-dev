@@ -20,7 +20,7 @@ abstract class WebTestCase extends BaseWebTestCase
      */
     protected static $container;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -33,17 +33,13 @@ abstract class WebTestCase extends BaseWebTestCase
         $producer->clearTraces();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
+        static::ensureKernelShutdown();
         static::$client = null;
-        static::$kernel = null;
-        static::$container = null;
     }
 
-    /**
-     * @return string
-     */
-    public static function getKernelClass()
+    public static function getKernelClass(): string
     {
         include_once __DIR__.'/App/AppKernel.php';
 

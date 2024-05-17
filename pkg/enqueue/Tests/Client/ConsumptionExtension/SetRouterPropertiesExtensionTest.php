@@ -13,6 +13,8 @@ use Enqueue\Test\ClassExtensionTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Context as InteropContext;
 use Interop\Queue\Processor;
+use Interop\Queue\Queue;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -161,7 +163,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
+     * @return MockObject|InteropContext
      */
     protected function createContextMock(): InteropContext
     {
@@ -169,7 +171,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
+     * @return MockObject|DriverInterface
      */
     protected function createDriverMock(): DriverInterface
     {
@@ -177,7 +179,7 @@ class SetRouterPropertiesExtensionTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createProcessorMock(): Processor
     {
@@ -185,17 +187,15 @@ class SetRouterPropertiesExtensionTest extends TestCase
     }
 
     /**
-     * @param mixed $queue
-     *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject|Consumer
      */
-    private function createConsumerStub($queue): Consumer
+    private function createConsumerStub(?Queue $queue): Consumer
     {
         $consumerMock = $this->createMock(Consumer::class);
         $consumerMock
             ->expects($this->any())
             ->method('getQueue')
-            ->willReturn($queue)
+            ->willReturn($queue ?? new NullQueue('queue'))
         ;
 
         return $consumerMock;

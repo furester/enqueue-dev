@@ -2,9 +2,13 @@
 
 namespace Enqueue\Test;
 
+use PHPUnit\Framework\IncompleteTestError;
+use PHPUnit\Framework\SkippedTestError;
+use PHPUnit\Util\Test;
+
 trait RetryTrait
 {
-    public function runBare()
+    public function runBare(): void
     {
         $e = null;
 
@@ -22,9 +26,9 @@ trait RetryTrait
                 parent::runBare();
 
                 return;
-            } catch (\PHPUnit_Framework_IncompleteTestError $e) {
+            } catch (IncompleteTestError $e) {
                 throw $e;
-            } catch (\PHPUnit_Framework_SkippedTestError $e) {
+            } catch (SkippedTestError $e) {
                 throw $e;
             } catch (\Throwable $e) {
                 // last one thrown below
@@ -43,7 +47,7 @@ trait RetryTrait
      */
     private function getNumberOfRetries()
     {
-        $annotations = $this->getAnnotations();
+        $annotations = Test::parseTestMethodAnnotations(static::class, $this->getName(false));
 
         if (isset($annotations['method']['retry'][0])) {
             return $annotations['method']['retry'][0];

@@ -8,6 +8,7 @@ use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\DuplicateJobException;
 use Enqueue\JobQueue\Job;
 use Enqueue\JobQueue\JobProcessor;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class JobProcessorTest extends TestCase
@@ -21,7 +22,8 @@ class JobProcessorTest extends TestCase
     {
         $processor = new JobProcessor($this->createJobStorage(), $this->createProducerMock());
 
-        $this->setExpectedException(\LogicException::class, 'OwnerId must not be empty');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('OwnerId must not be empty');
 
         $processor->findOrCreateRootJob(null, 'job-name', true);
     }
@@ -30,7 +32,8 @@ class JobProcessorTest extends TestCase
     {
         $processor = new JobProcessor($this->createJobStorage(), $this->createProducerMock());
 
-        $this->setExpectedException(\LogicException::class, 'Job name must not be empty');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Job name must not be empty');
 
         $processor->findOrCreateRootJob('owner-id', null, true);
     }
@@ -57,8 +60,14 @@ class JobProcessorTest extends TestCase
 
         $this->assertSame($job, $result);
         $this->assertEquals(Job::STATUS_NEW, $job->getStatus());
-        $this->assertEquals(new \DateTime(), $job->getCreatedAt(), '', 1);
-        $this->assertEquals(new \DateTime(), $job->getStartedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getCreatedAt()->getTimestamp()
+        );
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getStartedAt()->getTimestamp()
+        );
         $this->assertNull($job->getStoppedAt());
         $this->assertEquals('job-name', $job->getName());
         $this->assertEquals('owner-id', $job->getOwnerId());
@@ -98,7 +107,8 @@ class JobProcessorTest extends TestCase
     {
         $processor = new JobProcessor($this->createJobStorage(), $this->createProducerMock());
 
-        $this->setExpectedException(\LogicException::class, 'Job name must not be empty');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Job name must not be empty');
 
         $processor->findOrCreateChildJob(null, new Job());
     }
@@ -179,7 +189,10 @@ class JobProcessorTest extends TestCase
 
         $this->assertSame($job, $result);
         $this->assertEquals(Job::STATUS_NEW, $job->getStatus());
-        $this->assertEquals(new \DateTime(), $job->getCreatedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getCreatedAt()->getTimestamp()
+        );
         $this->assertNull($job->getStartedAt());
         $this->assertNull($job->getStoppedAt());
         $this->assertEquals('job-name', $job->getName());
@@ -193,7 +206,8 @@ class JobProcessorTest extends TestCase
         $rootJob = new Job();
         $rootJob->setId(12345);
 
-        $this->setExpectedException(\LogicException::class, 'Can\'t start root jobs. id: "12345"');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Can\'t start root jobs. id: "12345"');
 
         $processor->startChildJob($rootJob);
     }
@@ -215,10 +229,8 @@ class JobProcessorTest extends TestCase
 
         $processor = new JobProcessor($storage, $this->createProducerMock());
 
-        $this->setExpectedException(
-            \LogicException::class,
-            'Can start only new jobs: id: "12345", status: "enqueue.job_queue.status.cancelled"'
-        );
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Can start only new jobs: id: "12345", status: "enqueue.job_queue.status.cancelled"');
 
         $processor->startChildJob($job);
     }
@@ -253,7 +265,10 @@ class JobProcessorTest extends TestCase
         $processor->startChildJob($job);
 
         $this->assertEquals(Job::STATUS_RUNNING, $job->getStatus());
-        $this->assertEquals(new \DateTime(), $job->getStartedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getStartedAt()->getTimestamp()
+        );
     }
 
     public function testSuccessChildJobShouldThrowIfRootJob()
@@ -263,7 +278,8 @@ class JobProcessorTest extends TestCase
         $rootJob = new Job();
         $rootJob->setId(12345);
 
-        $this->setExpectedException(\LogicException::class, 'Can\'t success root jobs. id: "12345"');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Can\'t success root jobs. id: "12345"');
 
         $processor->successChildJob($rootJob);
     }
@@ -285,10 +301,8 @@ class JobProcessorTest extends TestCase
 
         $processor = new JobProcessor($storage, $this->createProducerMock());
 
-        $this->setExpectedException(
-            \LogicException::class,
-            'Can success only running jobs. id: "12345", status: "enqueue.job_queue.status.cancelled"'
-        );
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Can success only running jobs. id: "12345", status: "enqueue.job_queue.status.cancelled"');
 
         $processor->successChildJob($job);
     }
@@ -323,7 +337,10 @@ class JobProcessorTest extends TestCase
         $processor->successChildJob($job);
 
         $this->assertEquals(Job::STATUS_SUCCESS, $job->getStatus());
-        $this->assertEquals(new \DateTime(), $job->getStoppedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getStoppedAt()->getTimestamp()
+        );
     }
 
     public function testFailChildJobShouldThrowIfRootJob()
@@ -333,7 +350,8 @@ class JobProcessorTest extends TestCase
         $rootJob = new Job();
         $rootJob->setId(12345);
 
-        $this->setExpectedException(\LogicException::class, 'Can\'t fail root jobs. id: "12345"');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Can\'t fail root jobs. id: "12345"');
 
         $processor->failChildJob($rootJob);
     }
@@ -355,10 +373,8 @@ class JobProcessorTest extends TestCase
 
         $processor = new JobProcessor($storage, $this->createProducerMock());
 
-        $this->setExpectedException(
-            \LogicException::class,
-            'Can fail only running jobs. id: "12345", status: "enqueue.job_queue.status.cancelled"'
-        );
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Can fail only running jobs. id: "12345", status: "enqueue.job_queue.status.cancelled"');
 
         $processor->failChildJob($job);
     }
@@ -393,7 +409,10 @@ class JobProcessorTest extends TestCase
         $processor->failChildJob($job);
 
         $this->assertEquals(Job::STATUS_FAILED, $job->getStatus());
-        $this->assertEquals(new \DateTime(), $job->getStoppedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getStoppedAt()->getTimestamp()
+        );
     }
 
     public function testCancelChildJobShouldThrowIfRootJob()
@@ -403,7 +422,8 @@ class JobProcessorTest extends TestCase
         $rootJob = new Job();
         $rootJob->setId(12345);
 
-        $this->setExpectedException(\LogicException::class, 'Can\'t cancel root jobs. id: "12345"');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Can\'t cancel root jobs. id: "12345"');
 
         $processor->cancelChildJob($rootJob);
     }
@@ -425,10 +445,8 @@ class JobProcessorTest extends TestCase
 
         $processor = new JobProcessor($storage, $this->createProducerMock());
 
-        $this->setExpectedException(
-            \LogicException::class,
-            'Can cancel only new or running jobs. id: "12345", status: "enqueue.job_queue.status.cancelled"'
-        );
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Can cancel only new or running jobs. id: "12345", status: "enqueue.job_queue.status.cancelled"');
 
         $processor->cancelChildJob($job);
     }
@@ -463,8 +481,14 @@ class JobProcessorTest extends TestCase
         $processor->cancelChildJob($job);
 
         $this->assertEquals(Job::STATUS_CANCELLED, $job->getStatus());
-        $this->assertEquals(new \DateTime(), $job->getStoppedAt(), '', 1);
-        $this->assertEquals(new \DateTime(), $job->getStartedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getStoppedAt()->getTimestamp()
+        );
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $job->getStartedAt()->getTimestamp()
+        );
     }
 
     public function testInterruptRootJobShouldThrowIfNotRootJob()
@@ -475,7 +499,8 @@ class JobProcessorTest extends TestCase
 
         $processor = new JobProcessor($this->createJobStorage(), $this->createProducerMock());
 
-        $this->setExpectedException(\LogicException::class, 'Can interrupt only root jobs. id: "123"');
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Can interrupt only root jobs. id: "123"');
 
         $processor->interruptRootJob($notRootJob);
     }
@@ -535,11 +560,14 @@ class JobProcessorTest extends TestCase
         $processor->interruptRootJob($rootJob, true);
 
         $this->assertTrue($rootJob->isInterrupted());
-        $this->assertEquals(new \DateTime(), $rootJob->getStoppedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $rootJob->getStoppedAt()->getTimestamp()
+        );
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createJobStorage(): JobStorage
     {
@@ -547,7 +575,7 @@ class JobProcessorTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     private function createProducerMock(): ProducerInterface
     {

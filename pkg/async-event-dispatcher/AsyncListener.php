@@ -2,74 +2,16 @@
 
 namespace Enqueue\AsyncEventDispatcher;
 
-use Interop\Queue\Context;
-use Interop\Queue\Queue;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
-class AsyncListener
+class AsyncListener extends AbstractAsyncListener
 {
-    /**
-     * @var Context
-     */
-    private $context;
-
-    /**
-     * @var Registry
-     */
-    private $registry;
-
-    /**
-     * @var Queue
-     */
-    private $eventQueue;
-
-    /**
-     * @var bool
-     */
-    private $syncMode;
-
-    /**
-     * @param Context      $context
-     * @param Registry     $registry
-     * @param Queue|string $eventQueue
-     */
-    public function __construct(Context $context, Registry $registry, $eventQueue)
-    {
-        $this->context = $context;
-        $this->registry = $registry;
-        $this->eventQueue = $eventQueue instanceof Queue ? $eventQueue : $context->createQueue($eventQueue);
-    }
-
     public function __invoke(Event $event, $eventName)
     {
         $this->onEvent($event, $eventName);
     }
 
-    public function resetSyncMode()
-    {
-        $this->syncMode = [];
-    }
-
     /**
-     * @param string $eventName
-     */
-    public function syncMode($eventName)
-    {
-        $this->syncMode[$eventName] = true;
-    }
-
-    /**
-     * @param string $eventName
-     *
-     * @return bool
-     */
-    public function isSyncMode($eventName)
-    {
-        return isset($this->syncMode[$eventName]);
-    }
-
-    /**
-     * @param Event  $event
      * @param string $eventName
      */
     public function onEvent(Event $event, $eventName)

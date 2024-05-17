@@ -172,7 +172,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             $queue->getArguments() ? new AMQPTable($queue->getArguments()) : null
         );
 
-        return $messageCount;
+        return $messageCount ?? 0;
     }
 
     public function deleteQueue(InteropAmqpQueue $queue): void
@@ -220,7 +220,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 $bind->getTarget()->getTopicName(),
                 $bind->getRoutingKey(),
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
-                $bind->getArguments()
+                new AMQPTable($bind->getArguments())
             );
         // bind exchange to queue
         } else {
@@ -229,7 +229,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
                 $bind->getSource()->getTopicName(),
                 $bind->getRoutingKey(),
                 (bool) ($bind->getFlags() & InteropAmqpBind::FLAG_NOWAIT),
-                $bind->getArguments()
+                new AMQPTable($bind->getArguments())
             );
         }
     }
@@ -309,9 +309,9 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
         unset($headers['application_headers']);
 
         $message = new AmqpMessage($amqpMessage->getBody(), $properties, $headers);
-        $message->setDeliveryTag((int) $amqpMessage->delivery_info['delivery_tag']);
-        $message->setRedelivered($amqpMessage->delivery_info['redelivered']);
-        $message->setRoutingKey($amqpMessage->delivery_info['routing_key']);
+        $message->setDeliveryTag((int) $amqpMessage->getDeliveryTag());
+        $message->setRedelivered($amqpMessage->isRedelivered());
+        $message->setRoutingKey($amqpMessage->getRoutingKey());
 
         return $message;
     }

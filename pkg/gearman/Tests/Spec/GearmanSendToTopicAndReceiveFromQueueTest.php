@@ -8,12 +8,13 @@ use Interop\Queue\Spec\SendToTopicAndReceiveFromQueueSpec;
 
 /**
  * @group functional
+ * @group gearman
  */
 class GearmanSendToTopicAndReceiveFromQueueTest extends SendToTopicAndReceiveFromQueueSpec
 {
     private $time;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->time = time();
     }

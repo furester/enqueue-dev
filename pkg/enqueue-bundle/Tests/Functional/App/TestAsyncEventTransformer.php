@@ -6,8 +6,8 @@ use Enqueue\AsyncEventDispatcher\EventTransformer;
 use Enqueue\Util\JSON;
 use Interop\Queue\Context;
 use Interop\Queue\Message;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class TestAsyncEventTransformer implements EventTransformer
 {
@@ -16,9 +16,6 @@ class TestAsyncEventTransformer implements EventTransformer
      */
     private $context;
 
-    /**
-     * @param Context $context
-     */
     public function __construct(Context $context)
     {
         $this->context = $context;

@@ -7,13 +7,17 @@ namespace Enqueue\Dbal\Tests;
 use Enqueue\Dbal\DbalConsumer;
 use Enqueue\Dbal\DbalContext;
 use Enqueue\Dbal\DbalSubscriptionConsumer;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Queue\Consumer;
 use Interop\Queue\Queue;
 use Interop\Queue\SubscriptionConsumer;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DbalSubscriptionConsumerTest extends TestCase
 {
+    use ReadAttributeTrait;
+
     public function testShouldImplementSubscriptionConsumerInterface()
     {
         $rc = new \ReflectionClass(DbalSubscriptionConsumer::class);
@@ -145,7 +149,7 @@ class DbalSubscriptionConsumerTest extends TestCase
     }
 
     /**
-     * @return DbalContext|\PHPUnit_Framework_MockObject_MockObject
+     * @return DbalContext|MockObject
      */
     private function createDbalContextMock()
     {
@@ -155,7 +159,7 @@ class DbalSubscriptionConsumerTest extends TestCase
     /**
      * @param mixed|null $queueName
      *
-     * @return Consumer|\PHPUnit_Framework_MockObject_MockObject
+     * @return Consumer|MockObject
      */
     private function createConsumerStub($queueName = null)
     {

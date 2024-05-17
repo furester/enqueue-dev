@@ -5,6 +5,7 @@ namespace Enqueue\JobQueue\Tests;
 use Enqueue\JobQueue\CalculateRootJobStatusService;
 use Enqueue\JobQueue\Doctrine\JobStorage;
 use Enqueue\JobQueue\Job;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
 {
@@ -101,7 +102,10 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $case->calculate($childJob);
 
         $this->assertEquals($stopStatus, $rootJob->getStatus());
-        $this->assertEquals(new \DateTime(), $rootJob->getStoppedAt(), '', 1);
+        $this->assertEquals(
+            (new \DateTime())->getTimestamp(),
+            $rootJob->getStoppedAt()->getTimestamp()
+        );
     }
 
     public function testShouldSetStoppedAtOnlyIfWasNotSet()
@@ -128,7 +132,10 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
         $case = new CalculateRootJobStatusService($em);
         $case->calculate($childJob);
 
-        $this->assertEquals(new \DateTime('2012-12-12 12:12:12'), $rootJob->getStoppedAt());
+        $this->assertEquals(
+            (new \DateTime('2012-12-12 12:12:12'))->getTimestamp(),
+            $rootJob->getStoppedAt()->getTimestamp()
+        );
     }
 
     public function testShouldThrowIfInvalidStatus()
@@ -153,10 +160,8 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
 
         $case = new CalculateRootJobStatusService($storage);
 
-        $this->setExpectedException(
-            \LogicException::class,
-            'Got unsupported job status: id: "12345" status: "invalid-status"'
-        );
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Got unsupported job status: id: "12345" status: "invalid-status"');
 
         $case->calculate($childJob);
     }
@@ -356,7 +361,7 @@ class CalculateRootJobStatusServiceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Enqueue\JobQueue\Doctrine\JobStorage
+     * @return MockObject|\Enqueue\JobQueue\Doctrine\JobStorage
      */
     private function createJobStorageMock()
     {

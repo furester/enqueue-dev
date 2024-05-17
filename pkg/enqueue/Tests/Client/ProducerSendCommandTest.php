@@ -479,7 +479,7 @@ class ProducerSendCommandTest extends TestCase
 
         $extension
             ->expects($this->at(0))
-            ->method('onDriverPreSend')
+            ->method('onPostSend')
             ->willReturnCallback(function (PostSend $context) use ($message, $producer, $driver) {
                 $this->assertSame($message, $context->getMessage());
                 $this->assertSame($producer, $context->getProducer());
@@ -493,7 +493,7 @@ class ProducerSendCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createRpcFactoryMock(): RpcFactory
     {
@@ -501,7 +501,7 @@ class ProducerSendCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createDriverStub(): DriverInterface
     {

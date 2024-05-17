@@ -587,7 +587,7 @@ class ConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DelegateProcessor
+     * @return \PHPUnit\Framework\MockObject\MockObject|DelegateProcessor
      */
     private function createDelegateProcessorMock()
     {
@@ -595,7 +595,7 @@ class ConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|QueueConsumerInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|QueueConsumerInterface
      */
     private function createQueueConsumerMock()
     {
@@ -603,15 +603,15 @@ class ConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|DriverInterface
      */
-    private function createDriverStub(RouteCollection $routeCollection = null): DriverInterface
+    private function createDriverStub(?RouteCollection $routeCollection = null): DriverInterface
     {
         $driverMock = $this->createMock(DriverInterface::class);
         $driverMock
             ->expects($this->any())
             ->method('getRouteCollection')
-            ->willReturn($routeCollection)
+            ->willReturn($routeCollection ?? new RouteCollection([]))
         ;
 
         $driverMock
@@ -624,7 +624,7 @@ class ConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createContextWithoutSubscriptionConsumerMock(): InteropContext
     {
@@ -639,7 +639,7 @@ class ConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|InteropContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|InteropContext
      */
     private function createContextStub(Consumer $consumer = null): InteropContext
     {
@@ -663,7 +663,7 @@ class ConsumeCommandTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ExtensionInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|ExtensionInterface
      */
     private function createExtension()
     {
@@ -673,10 +673,13 @@ class ConsumeCommandTest extends TestCase
     /**
      * @param mixed|null $queue
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|Consumer
+     * @return \PHPUnit\Framework\MockObject\MockObject|Consumer
      */
     private function createConsumerStub($queue = null): Consumer
     {
+        if (null === $queue) {
+            $queue = 'queue';
+        }
         if (is_string($queue)) {
             $queue = new NullQueue($queue);
         }

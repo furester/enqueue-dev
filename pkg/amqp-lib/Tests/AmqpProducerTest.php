@@ -16,6 +16,7 @@ use Interop\Queue\Producer;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage as LibAMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AmqpProducerTest extends TestCase
@@ -24,7 +25,10 @@ class AmqpProducerTest extends TestCase
 
     public function testCouldBeConstructedWithRequiredArguments()
     {
-        new AmqpProducer($this->createAmqpChannelMock(), $this->createContextMock());
+        self::assertInstanceOf(
+            AmqpProducer::class,
+            new AmqpProducer($this->createAmqpChannelMock(), $this->createContextMock())
+        );
     }
 
     public function testShouldImplementProducerInterface()
@@ -142,7 +146,7 @@ class AmqpProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Message
+     * @return MockObject|Message
      */
     private function createMessageMock()
     {
@@ -150,7 +154,7 @@ class AmqpProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Destination
+     * @return MockObject|Destination
      */
     private function createDestinationMock()
     {
@@ -158,7 +162,7 @@ class AmqpProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AMQPChannel
+     * @return MockObject|AMQPChannel
      */
     private function createAmqpChannelMock()
     {
@@ -166,7 +170,7 @@ class AmqpProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AmqpContext
+     * @return MockObject|AmqpContext
      */
     private function createContextMock()
     {

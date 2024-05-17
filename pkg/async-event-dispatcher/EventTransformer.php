@@ -3,13 +3,12 @@
 namespace Enqueue\AsyncEventDispatcher;
 
 use Interop\Queue\Message;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 interface EventTransformer
 {
     /**
-     * @param string     $eventName
-     * @param Event|null $event
+     * @param string $eventName
      *
      * @return Message
      */
@@ -17,13 +16,15 @@ interface EventTransformer
 
     /**
      * If you able to transform message back to event return it.
-     * If you failed to transform for some reason you can return a string status (@see Process constants) or an object that implements __toString method.
-     * The object must have a __toString method is supposed to be used as Processor::process return value.
+     * If you failed to transform for some reason you can return a string status.
      *
-     * @param string  $eventName
-     * @param Message $message
+     * @param mixed $eventNAme
+     * @param mixed $eventName
      *
      * @return Event|string|object
+     *
+     * @see Process constants) or an object that implements __toString method.
+     *      The object must have a __toString method is supposed to be used as Processor::process return value.
      */
     public function toEvent($eventName, Message $message);
 }

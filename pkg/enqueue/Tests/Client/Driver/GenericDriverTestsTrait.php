@@ -2,6 +2,7 @@
 
 namespace Enqueue\Tests\Client\Driver;
 
+use DMS\PHPUnitExtensions\ArraySubset\Assert;
 use Enqueue\Client\Config;
 use Enqueue\Client\DriverInterface;
 use Enqueue\Client\Message;
@@ -1124,12 +1125,12 @@ trait GenericDriverTestsTrait
     abstract protected function createDriver(...$args): DriverInterface;
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     abstract protected function createContextMock(): Context;
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     abstract protected function createProducerMock(): InteropProducer;
 
@@ -1140,7 +1141,7 @@ trait GenericDriverTestsTrait
     abstract protected function createMessage(): InteropMessage;
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function createContextStub(): Context
     {
@@ -1191,10 +1192,10 @@ trait GenericDriverTestsTrait
     protected function assertClientMessage(Message $clientMessage): void
     {
         $this->assertSame('body', $clientMessage->getBody());
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'hkey' => 'hval',
         ], $clientMessage->getHeaders());
-        $this->assertArraySubset([
+        Assert::assertArraySubset([
             'pkey' => 'pval',
             Config::CONTENT_TYPE => 'theContentType',
             Config::EXPIRE => '22',

@@ -67,7 +67,7 @@ class RedisProducerTest extends TestCase
                 $this->assertNotEmpty($message['headers']['message_id']);
                 $this->assertSame(0, $message['headers']['attempts']);
 
-                return true;
+                return 1;
             })
         ;
 
@@ -128,7 +128,7 @@ class RedisProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RedisContext
+     * @return \PHPUnit\Framework\MockObject\MockObject|RedisContext
      */
     private function createContextMock()
     {
@@ -136,7 +136,7 @@ class RedisProducerTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Redis
+     * @return \PHPUnit\Framework\MockObject\MockObject|Redis
      */
     private function createRedisMock()
     {

@@ -35,8 +35,7 @@ class SnsContext implements Context
     {
         $this->client = $client;
         $this->config = $config;
-
-        $this->topicArns = [];
+        $this->topicArns = $config['topic_arns'] ?? [];
     }
 
     /**
@@ -75,6 +74,11 @@ class SnsContext implements Context
         }
 
         $this->topicArns[$destination->getTopicName()] = (string) $result->get('TopicArn');
+    }
+
+    public function setTopicArn(SnsDestination $destination, string $arn): void
+    {
+        $this->topicArns[$destination->getTopicName()] = $arn;
     }
 
     public function deleteTopic(SnsDestination $destination): void
@@ -139,6 +143,16 @@ class SnsContext implements Context
         }
 
         return $subscriptions;
+    }
+
+    public function setSubscriptionAttributes(SnsSubscribe $subscribe): void
+    {
+        foreach ($this->getSubscriptions($subscribe->getTopic()) as $subscription) {
+            $this->client->setSubscriptionAttributes(array_merge(
+                $subscribe->getAttributes(),
+                ['SubscriptionArn' => $subscription['SubscriptionArn']],
+            ));
+        }
     }
 
     public function getTopicArn(SnsDestination $destination): string

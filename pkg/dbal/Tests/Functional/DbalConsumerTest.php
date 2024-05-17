@@ -21,12 +21,12 @@ class DbalConsumerTest extends TestCase
      */
     private $context;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->context = $this->createDbalContext();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if ($this->context) {
             $this->context->close();
@@ -173,7 +173,7 @@ class DbalConsumerTest extends TestCase
     {
         return (int) $this->context->getDbalConnection()
             ->executeQuery('SELECT count(*) FROM '.$this->context->getTableName())
-            ->fetchColumn(0)
+            ->fetchOne()
         ;
     }
 }

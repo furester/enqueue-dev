@@ -37,8 +37,12 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
     private $redeliveryDelay;
 
     /**
-     * @param DbalContext $context
+     * Time to wait between subscription requests in milliseconds.
+     *
+     * @var int
      */
+    private $pollingInterval = 200;
+
     public function __construct(DbalContext $context)
     {
         $this->context = $context;
@@ -63,6 +67,18 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
         return $this;
     }
 
+    public function getPollingInterval(): int
+    {
+        return $this->pollingInterval;
+    }
+
+    public function setPollingInterval(int $msec): self
+    {
+        $this->pollingInterval = $msec;
+
+        return $this;
+    }
+
     public function consume(int $timeout = 0): void
     {
         if (empty($this->subscribers)) {
@@ -79,20 +95,24 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
         $redeliveryDelay = $this->getRedeliveryDelay() / 1000; // milliseconds to seconds
 
         $currentQueueNames = [];
+        $queueConsumed = false;
         while (true) {
             if (empty($currentQueueNames)) {
                 $currentQueueNames = $queueNames;
+                $queueConsumed = false;
             }
 
             $this->removeExpiredMessages();
             $this->redeliverMessages();
 
             if ($message = $this->fetchMessage($currentQueueNames, $redeliveryDelay)) {
+                $queueConsumed = true;
+
                 /**
-                 * @var DbalConsumer
+                 * @var DbalConsumer $consumer
                  * @var callable     $callback
                  */
-                list($consumer, $callback) = $this->subscribers[$message->getQueue()];
+                [$consumer, $callback] = $this->subscribers[$message->getQueue()];
 
                 if (false === call_user_func($callback, $message, $consumer)) {
                     return;
@@ -102,7 +122,9 @@ class DbalSubscriptionConsumer implements SubscriptionConsumer
             } else {
                 $currentQueueNames = [];
 
-                usleep(200000); // 200ms
+                if (!$queueConsumed) {
+                    usleep($this->getPollingInterval() * 1000);
+                }
             }
 
             if ($timeout && microtime(true) >= $now + $timeout) {

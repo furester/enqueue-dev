@@ -1,5 +1,209 @@
 # Change Log
 
+## [0.10.18](https://github.com/php-enqueue/enqueue-dev/tree/0.10.18) (2023-03-18)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.17...0.10.18)
+
+**Merged pull requests:**
+
+- Fix Shield URLs in READMEs [\#1289](https://github.com/php-enqueue/enqueue-dev/pull/1289) ([amayer5125](https://github.com/amayer5125))
+- Fix AWS SDK token parameter [\#1284](https://github.com/php-enqueue/enqueue-dev/pull/1284) ([andrewmy](https://github.com/andrewmy))
+- MongoDB - Add combined index [\#1283](https://github.com/php-enqueue/enqueue-dev/pull/1283) ([ddziaduch](https://github.com/ddziaduch))
+- Add setting subscription attributes to Sns and SnsQs [\#1281](https://github.com/php-enqueue/enqueue-dev/pull/1281) ([andrewmy](https://github.com/andrewmy))
+- code style fix \(native\_constant\_invocation\) [\#1276](https://github.com/php-enqueue/enqueue-dev/pull/1276) ([EmilMassey](https://github.com/EmilMassey))
+- \[amqp-lib\] Replace amqp-lib deprecated public property with getters [\#1273](https://github.com/php-enqueue/enqueue-dev/pull/1273) ([ramunasd](https://github.com/ramunasd))
+- fix: parenthesis missing allowed invalid delays [\#1266](https://github.com/php-enqueue/enqueue-dev/pull/1266) ([aldenw](https://github.com/aldenw))
+- Allow rdkafka falsy keys [\#1264](https://github.com/php-enqueue/enqueue-dev/pull/1264) ([qkdreyer](https://github.com/qkdreyer))
+- Symfony config allow null [\#1263](https://github.com/php-enqueue/enqueue-dev/pull/1263) ([h0raz](https://github.com/h0raz))
+- Ensure pass consumer tag as string to bunny amqp [\#1255](https://github.com/php-enqueue/enqueue-dev/pull/1255) ([snapshotpl](https://github.com/snapshotpl))
+- chore: Update dependency dbal [\#1253](https://github.com/php-enqueue/enqueue-dev/pull/1253) ([meidlinga](https://github.com/meidlinga))
+
+## [0.10.17](https://github.com/php-enqueue/enqueue-dev/tree/0.10.17) (2022-05-17)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.16...0.10.17)
+
+**Merged pull requests:**
+
+- Disable sleep while queue items available [\#1250](https://github.com/php-enqueue/enqueue-dev/pull/1250) ([mordilion](https://github.com/mordilion))
+
+## [0.10.16](https://github.com/php-enqueue/enqueue-dev/tree/0.10.16) (2022-04-28)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.15...0.10.16)
+
+**Merged pull requests:**
+
+- Upgrade ext-rdkafka to 6.0 [\#1241](https://github.com/php-enqueue/enqueue-dev/pull/1241) ([lucasrivoiro](https://github.com/lucasrivoiro))
+- Replace rabbitmq-management-api with a packagist source and fixed small github actions typo [\#1240](https://github.com/php-enqueue/enqueue-dev/pull/1240) ([oreillysean](https://github.com/oreillysean))
+- Add support for Symfony 6; drop \< 5.1 [\#1239](https://github.com/php-enqueue/enqueue-dev/pull/1239) ([andrewmy](https://github.com/andrewmy))
+- Replace rabbitmq-management-api with a packagist source [\#1238](https://github.com/php-enqueue/enqueue-dev/pull/1238) ([andrewmy](https://github.com/andrewmy))
+- Fix CI [\#1237](https://github.com/php-enqueue/enqueue-dev/pull/1237) ([jdecool](https://github.com/jdecool))
+- Allow ext-rdkafka 6 usage [\#1233](https://github.com/php-enqueue/enqueue-dev/pull/1233) ([jdecool](https://github.com/jdecool))
+- Fix types for Symfony 5.4 [\#1225](https://github.com/php-enqueue/enqueue-dev/pull/1225) ([shyim](https://github.com/shyim))
+
+## [0.10.15](https://github.com/php-enqueue/enqueue-dev/tree/0.10.15) (2021-12-11)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.14...0.10.15)
+
+**Merged pull requests:**
+
+- feat\(snsqs\): allow client http configuration for sns and sqs [\#1216](https://github.com/php-enqueue/enqueue-dev/pull/1216) ([eortiz-tracktik](https://github.com/eortiz-tracktik))
+- Add FIFO logic to SNS [\#1214](https://github.com/php-enqueue/enqueue-dev/pull/1214) ([kate-simozhenko](https://github.com/kate-simozhenko))
+- Fix falling tests [\#1211](https://github.com/php-enqueue/enqueue-dev/pull/1211) ([snapshotpl](https://github.com/snapshotpl))
+- RdKafka; Replace composer-modifying for testing with --ignore-platform-req argument [\#1210](https://github.com/php-enqueue/enqueue-dev/pull/1210) ([maartenderie](https://github.com/maartenderie))
+- Allow psr/container v2 [\#1206](https://github.com/php-enqueue/enqueue-dev/pull/1206) ([ADmad](https://github.com/ADmad))
+
+## [0.10.14](https://github.com/php-enqueue/enqueue-dev/tree/0.10.14) (2021-10-29)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.13...0.10.14)
+
+**Merged pull requests:**
+
+- Fix passed parameters for compatibility with newest version of dbal [\#1203](https://github.com/php-enqueue/enqueue-dev/pull/1203) ([dgafka](https://github.com/dgafka))
+- Allow psr/log v2 and v3 [\#1198](https://github.com/php-enqueue/enqueue-dev/pull/1198) ([snapshotpl](https://github.com/snapshotpl))
+- Fix partition's choice for the cases when partition number is zero [\#1196](https://github.com/php-enqueue/enqueue-dev/pull/1196) ([rodrigosarmentopicpay](https://github.com/rodrigosarmentopicpay))
+- Added getter for offset field in RdKafkaConsumer class [\#1184](https://github.com/php-enqueue/enqueue-dev/pull/1184) ([DigitVE](https://github.com/DigitVE))
+
+## [0.10.13](https://github.com/php-enqueue/enqueue-dev/tree/0.10.13) (2021-08-25)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.12...0.10.13)
+
+**Merged pull requests:**
+
+- \[SNSQS\] added possibility to send message attributes using snsqs transport [\#1195](https://github.com/php-enqueue/enqueue-dev/pull/1195) ([onatskyy](https://github.com/onatskyy))
+- Add in missing arg [\#1194](https://github.com/php-enqueue/enqueue-dev/pull/1194) ([gdsmith](https://github.com/gdsmith))
+- \#1190 add index on delivery\_id to prevent slow queries [\#1191](https://github.com/php-enqueue/enqueue-dev/pull/1191) ([commercewerft](https://github.com/commercewerft))
+- Add setTopicArn methods to SnsContext and SnsQsContext [\#1189](https://github.com/php-enqueue/enqueue-dev/pull/1189) ([gdsmith](https://github.com/gdsmith))
+
+## [0.10.11](https://github.com/php-enqueue/enqueue-dev/tree/0.10.11) (2021-04-28)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.10...0.10.11)
+
+**Merged pull requests:**
+
+- Perform at least once delivery when rejecting with requeue [\#1165](https://github.com/php-enqueue/enqueue-dev/pull/1165) ([dgafka](https://github.com/dgafka))
+- Fix dbal delivery delay to always keep integer value [\#1161](https://github.com/php-enqueue/enqueue-dev/pull/1161) ([dgafka](https://github.com/dgafka))
+- Add SqsConsumer methods to SnsQsConsumer [\#1160](https://github.com/php-enqueue/enqueue-dev/pull/1160) ([gdsmith](https://github.com/gdsmith))
+- add subscription\_interval as config for dbal subscription consumer [\#1159](https://github.com/php-enqueue/enqueue-dev/pull/1159) ([mordilion](https://github.com/mordilion))
+- register worker callback only once, move to constructor [\#1157](https://github.com/php-enqueue/enqueue-dev/pull/1157) ([cturbelin](https://github.com/cturbelin))
+- Try to change doctrine/orm version for supporting 2.8 \(PHP 8 support\). [\#1155](https://github.com/php-enqueue/enqueue-dev/pull/1155) ([GothShoot](https://github.com/GothShoot))
+- sns context - fallback for not breaking BC with 10.10 previous versions [\#1149](https://github.com/php-enqueue/enqueue-dev/pull/1149) ([bafor](https://github.com/bafor))
+
+## [0.10.10](https://github.com/php-enqueue/enqueue-dev/tree/0.10.10) (2021-03-24)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.9...0.10.10)
+
+**Merged pull requests:**
+
+- \[sns\] added possibility to define already existing topics \(prevent create topic call\) \#1022 [\#1147](https://github.com/php-enqueue/enqueue-dev/pull/1147) ([paramonov](https://github.com/paramonov))
+- \[gps\] Add support for consuming message from external publisher in non-standard format [\#1118](https://github.com/php-enqueue/enqueue-dev/pull/1118) ([maciejzgadzaj](https://github.com/maciejzgadzaj))
+
+## [0.10.9](https://github.com/php-enqueue/enqueue-dev/tree/0.10.9) (2021-03-17)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.8...0.10.9)
+
+**Merged pull requests:**
+
+- Upgrade php-amqplib to v3.0 [\#1146](https://github.com/php-enqueue/enqueue-dev/pull/1146) ([masterjus](https://github.com/masterjus))
+- Split tests into different matrices; fix highest/lowest dependencies [\#1139](https://github.com/php-enqueue/enqueue-dev/pull/1139) ([andrewmy](https://github.com/andrewmy))
+
+## [0.10.8](https://github.com/php-enqueue/enqueue-dev/tree/0.10.8) (2021-02-17)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.7...0.10.8)
+
+**Merged pull requests:**
+
+- Fix package CI [\#1138](https://github.com/php-enqueue/enqueue-dev/pull/1138) ([andrewmy](https://github.com/andrewmy))
+- add sns driver + use profile to establish connection [\#1134](https://github.com/php-enqueue/enqueue-dev/pull/1134) ([fbaudry](https://github.com/fbaudry))
+- Add PHP 8 [\#1132](https://github.com/php-enqueue/enqueue-dev/pull/1132) ([andrewmy](https://github.com/andrewmy))
+
+## [0.10.7](https://github.com/php-enqueue/enqueue-dev/tree/0.10.7) (2021-02-03)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.6...0.10.7)
+
+**Merged pull requests:**
+
+- PHPUnit 9.5 [\#1131](https://github.com/php-enqueue/enqueue-dev/pull/1131) ([andrewmy](https://github.com/andrewmy))
+- Fix the build matrix [\#1130](https://github.com/php-enqueue/enqueue-dev/pull/1130) ([andrewmy](https://github.com/andrewmy))
+- Disable Travis CI [\#1129](https://github.com/php-enqueue/enqueue-dev/pull/1129) ([makasim](https://github.com/makasim))
+- Add GitHub Action CI [\#1127](https://github.com/php-enqueue/enqueue-dev/pull/1127) ([andrewmy](https://github.com/andrewmy))
+- Allow ext-rdkafka 5 [\#1126](https://github.com/php-enqueue/enqueue-dev/pull/1126) ([andrewmy](https://github.com/andrewmy))
+- Fix - Bad parameter for exception [\#1124](https://github.com/php-enqueue/enqueue-dev/pull/1124) ([atrauzzi](https://github.com/atrauzzi))
+- \[fix\] queue consumption: catch throwable for processing errors [\#1114](https://github.com/php-enqueue/enqueue-dev/pull/1114) ([macghriogair](https://github.com/macghriogair))
+- Ramsey dependency removed in favor to \Enqueue\Util\UUID::generate [\#1110](https://github.com/php-enqueue/enqueue-dev/pull/1110) ([inri13666](https://github.com/inri13666))
+- Added: ability to choose different entity manager [\#1081](https://github.com/php-enqueue/enqueue-dev/pull/1081) ([balabis](https://github.com/balabis))
+
+## [0.10.6](https://github.com/php-enqueue/enqueue-dev/tree/0.10.6) (2020-10-16)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.5...0.10.6)
+
+**Merged pull requests:**
+
+- fixing issue \#1085 [\#1105](https://github.com/php-enqueue/enqueue-dev/pull/1105) ([nivpenso](https://github.com/nivpenso))
+- Fix DoctrineConnectionFactoryFactory due to doctrine/common changes [\#1089](https://github.com/php-enqueue/enqueue-dev/pull/1089) ([kdefives](https://github.com/kdefives))
+
+## [0.10.5](https://github.com/php-enqueue/enqueue-dev/tree/0.10.5) (2020-10-09)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.4...0.10.5)
+
+**Merged pull requests:**
+
+- update image [\#1104](https://github.com/php-enqueue/enqueue-dev/pull/1104) ([nick-zh](https://github.com/nick-zh))
+- \[rdkafka\]use supported librdkafka version of ext [\#1103](https://github.com/php-enqueue/enqueue-dev/pull/1103) ([nick-zh](https://github.com/nick-zh))
+- \[rdkafka\] add non-blocking poll call to serve cb's [\#1102](https://github.com/php-enqueue/enqueue-dev/pull/1102) ([nick-zh](https://github.com/nick-zh))
+- \[rdkafka\] remove topic conf, deprecated [\#1101](https://github.com/php-enqueue/enqueue-dev/pull/1101) ([nick-zh](https://github.com/nick-zh))
+- \[stomp\] Fix - Add automatic reconnect support for STOMP producers [\#1099](https://github.com/php-enqueue/enqueue-dev/pull/1099) ([atrauzzi](https://github.com/atrauzzi))
+- fix localstack version \(one that worked\) [\#1094](https://github.com/php-enqueue/enqueue-dev/pull/1094) ([makasim](https://github.com/makasim))
+- Allow false-y values for unsupported options [\#1093](https://github.com/php-enqueue/enqueue-dev/pull/1093) ([atrauzzi](https://github.com/atrauzzi))
+- Lock doctrine perisistence version. Fix tests. [\#1092](https://github.com/php-enqueue/enqueue-dev/pull/1092) ([makasim](https://github.com/makasim))
+
+## [0.10.4](https://github.com/php-enqueue/enqueue-dev/tree/0.10.4) (2020-09-24)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.3...0.10.4)
+
+**Merged pull requests:**
+
+- \[stomp\] Add first pass for Apache ActiveMQ Artemis support [\#1091](https://github.com/php-enqueue/enqueue-dev/pull/1091) ([atrauzzi](https://github.com/atrauzzi))
+- \[amqp\]Solves binding Headers Exchange with Queue using custom arguments [\#1087](https://github.com/php-enqueue/enqueue-dev/pull/1087) ([dgafka](https://github.com/dgafka))
+- \[async-command\] Fix service definition to apply the timeout [\#1084](https://github.com/php-enqueue/enqueue-dev/pull/1084) ([jcrombez](https://github.com/jcrombez))
+- \[mongodb\] fix\(MongoDB\) Redelivery not working \(fixes \#1077\) [\#1078](https://github.com/php-enqueue/enqueue-dev/pull/1078) ([josefsabl](https://github.com/josefsabl))
+- Add php 7.3 and 7.4 travis env to every package [\#1076](https://github.com/php-enqueue/enqueue-dev/pull/1076) ([snapshotpl](https://github.com/snapshotpl))
+- Docs: update Supported Brokers [\#1074](https://github.com/php-enqueue/enqueue-dev/pull/1074) ([Nebual](https://github.com/Nebual))
+- \[rdkafka\] Compatibility with Phprdkafka 4.0 [\#959](https://github.com/php-enqueue/enqueue-dev/pull/959) ([Steveb-p](https://github.com/Steveb-p))
+
+## [0.10.3](https://github.com/php-enqueue/enqueue-dev/tree/0.10.3) (2020-07-31)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.2...0.10.3)
+
+**Merged pull requests:**
+
+- Allow to install ramsey/uuid:^4 [\#1075](https://github.com/php-enqueue/enqueue-dev/pull/1075) ([snapshotpl](https://github.com/snapshotpl))
+- chore: add typehint to RdKafkaConsumer\#getQueue [\#1071](https://github.com/php-enqueue/enqueue-dev/pull/1071) ([qkdreyer](https://github.com/qkdreyer))
+- Fixes typo on client messages exemples doc [\#1065](https://github.com/php-enqueue/enqueue-dev/pull/1065) ([brunousml](https://github.com/brunousml))
+- Fix contact us link [\#1058](https://github.com/php-enqueue/enqueue-dev/pull/1058) ([andrew-demb](https://github.com/andrew-demb))
+- Fix typos [\#1049](https://github.com/php-enqueue/enqueue-dev/pull/1049) ([pgrimaud](https://github.com/pgrimaud))
+- Added support for ramsey/uuid 4.0 [\#1043](https://github.com/php-enqueue/enqueue-dev/pull/1043) ([a-menshchikov](https://github.com/a-menshchikov))
+- Changed: cast redelivery\_delay to int [\#1034](https://github.com/php-enqueue/enqueue-dev/pull/1034) ([balabis](https://github.com/balabis))
+- Add php 7.4 to test matrix [\#991](https://github.com/php-enqueue/enqueue-dev/pull/991) ([snapshotpl](https://github.com/snapshotpl))
+
+## [0.10.2](https://github.com/php-enqueue/enqueue-dev/tree/0.10.2) (2020-03-20)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.1...0.10.2)
+
+**Merged pull requests:**
+
+- Implement DeliveryDelay, Priority and TimeToLive in PheanstalkProducer [\#1033](https://github.com/php-enqueue/enqueue-dev/pull/1033) ([likeuntomurphy](https://github.com/likeuntomurphy))
+- fix\(mongodb\): Exception throwing fatal error, Broken handling of Mong… [\#1032](https://github.com/php-enqueue/enqueue-dev/pull/1032) ([josefsabl](https://github.com/josefsabl))
+- RUN\_COMMAND Option example [\#1030](https://github.com/php-enqueue/enqueue-dev/pull/1030) ([gam6itko](https://github.com/gam6itko))
+- typo [\#1026](https://github.com/php-enqueue/enqueue-dev/pull/1026) ([sebastianneubert](https://github.com/sebastianneubert))
+- Add extension tag parameter note [\#1023](https://github.com/php-enqueue/enqueue-dev/pull/1023) ([Steveb-p](https://github.com/Steveb-p))
+- STOMP. add additional configuration [\#1018](https://github.com/php-enqueue/enqueue-dev/pull/1018) ([versh23](https://github.com/versh23))
+
+## [0.10.1](https://github.com/php-enqueue/enqueue-dev/tree/0.10.1) (2020-01-31)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.10.0...0.10.1)
+
+**Merged pull requests:**
+
+- \[dbal\] fix: allow absolute paths for sqlite transport [\#1015](https://github.com/php-enqueue/enqueue-dev/pull/1015) ([cawolf](https://github.com/cawolf))
+- \[tests\] Add schema declaration to phpunit files [\#1014](https://github.com/php-enqueue/enqueue-dev/pull/1014) ([Steveb-p](https://github.com/Steveb-p))
+- \[rdkafka\] Catch consume error "Local: Broker transport failure" and continue consume [\#1009](https://github.com/php-enqueue/enqueue-dev/pull/1009) ([rdotter](https://github.com/rdotter))
+- \[sqs\] SQS Transport - Add support for AWS profiles. [\#1008](https://github.com/php-enqueue/enqueue-dev/pull/1008) ([bgaillard](https://github.com/bgaillard))
+- \[amqp\] fixes \#1003 Return value of Enqueue\AmqpLib\AmqpContext::declareQueue() must be of the type int [\#1004](https://github.com/php-enqueue/enqueue-dev/pull/1004) ([kalyabin](https://github.com/kalyabin))
+- \[gearman\] Gearman Consumer receive should only fetch one message [\#998](https://github.com/php-enqueue/enqueue-dev/pull/998) ([arep](https://github.com/arep))
+- \[sqs\] add messageId to the sqsMessage [\#992](https://github.com/php-enqueue/enqueue-dev/pull/992) ([BenoitLeveque](https://github.com/BenoitLeveque))
+
+## [0.10.0](https://github.com/php-enqueue/enqueue-dev/tree/0.10.0) (2019-12-19)
+[Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.15...0.10.0)
+
+**Merged pull requests:**
+
+- Symfony 5 [\#997](https://github.com/php-enqueue/enqueue-dev/pull/997) ([kuraobi](https://github.com/kuraobi))
+- Replace the Magento 1 code into the Magento 2 documentation [\#999](https://github.com/php-enqueue/enqueue-dev/pull/999) ([hochgenug](https://github.com/hochgenug))
+- Wrong parameter description [\#994](https://github.com/php-enqueue/enqueue-dev/pull/994) ([bramstroker](https://github.com/bramstroker))
+
 ## [0.9.15](https://github.com/php-enqueue/enqueue-dev/tree/0.9.15) (2019-11-28)
 [Full Changelog](https://github.com/php-enqueue/enqueue-dev/compare/0.9.14...0.9.15)
 

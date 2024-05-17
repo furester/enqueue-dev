@@ -74,11 +74,11 @@ class SimpleSetupBrokerCommandTest extends TestCase
         $tester = new CommandTester($command);
         $tester->execute([]);
 
-        $this->assertContains('Broker set up', $tester->getDisplay());
+        $this->assertStringContainsString('Broker set up', $tester->getDisplay());
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|DriverInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|DriverInterface
      */
     private function createClientDriverMock()
     {

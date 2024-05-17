@@ -24,13 +24,14 @@ class SnsConnectionFactory implements ConnectionFactory
 
     /**
      * $config = [
-     *   'key' => null                AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
+     *   'key' => null,               AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'secret' => null,            AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'token' => null,             AWS credentials. If no credentials are provided, the SDK will attempt to load them from the environment.
      *   'region' => null,            (string, required) Region to connect to. See http://docs.aws.amazon.com/general/latest/gr/rande.html for a list of available regions.
      *   'version' => '2012-11-05',   (string, required) The version of the webservice to utilize
      *   'lazy' => true,              Enable lazy connection (boolean)
-     *   'endpoint' => null           (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
+     *   'endpoint' => null,          (string, default=null) The full URI of the webservice. This is only required when connecting to a custom endpoint e.g. localstack
+     *   'topic_arns' => [],          (array<string,string>) The list of existing topic arns: key - topic name; value - arn
      * ].
      *
      * or
@@ -51,19 +52,19 @@ class SnsConnectionFactory implements ConnectionFactory
 
         if (empty($config)) {
             $config = [];
-        } elseif (is_string($config)) {
+        } elseif (\is_string($config)) {
             $config = $this->parseDsn($config);
-        } elseif (is_array($config)) {
-            if (array_key_exists('dsn', $config)) {
-                $config = array_replace_recursive($config, $this->parseDsn($config['dsn']));
+        } elseif (\is_array($config)) {
+            if (\array_key_exists('dsn', $config)) {
+                $config = \array_replace_recursive($config, $this->parseDsn($config['dsn']));
 
                 unset($config['dsn']);
             }
         } else {
-            throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AwsSnsClient::class));
+            throw new \LogicException(\sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AwsSnsClient::class));
         }
 
-        $this->config = array_replace($this->defaultConfig(), $config);
+        $this->config = \array_replace($this->defaultConfig(), $config);
     }
 
     /**
@@ -89,6 +90,10 @@ class SnsConnectionFactory implements ConnectionFactory
             $config['endpoint'] = $this->config['endpoint'];
         }
 
+        if (isset($this->config['profile'])) {
+            $config['profile'] = $this->config['profile'];
+        }
+
         if ($this->config['key'] && $this->config['secret']) {
             $config['credentials'] = [
                 'key' => $this->config['key'],
@@ -98,6 +103,10 @@ class SnsConnectionFactory implements ConnectionFactory
             if ($this->config['token']) {
                 $config['credentials']['token'] = $this->config['token'];
             }
+        }
+
+        if (isset($this->config['http'])) {
+            $config['http'] = $this->config['http'];
         }
 
         $establishConnection = function () use ($config) {
@@ -117,13 +126,10 @@ class SnsConnectionFactory implements ConnectionFactory
         $dsn = Dsn::parseFirst($dsn);
 
         if ('sns' !== $dsn->getSchemeProtocol()) {
-            throw new \LogicException(sprintf(
-                'The given scheme protocol "%s" is not supported. It must be "sns"',
-                $dsn->getSchemeProtocol()
-            ));
+            throw new \LogicException(\sprintf('The given scheme protocol "%s" is not supported. It must be "sns"', $dsn->getSchemeProtocol()));
         }
 
-        return array_filter(array_replace($dsn->getQuery(), [
+        return \array_filter(\array_replace($dsn->getQuery(), [
             'key' => $dsn->getString('key'),
             'secret' => $dsn->getString('secret'),
             'token' => $dsn->getString('token'),
@@ -131,6 +137,8 @@ class SnsConnectionFactory implements ConnectionFactory
             'version' => $dsn->getString('version'),
             'lazy' => $dsn->getBool('lazy'),
             'endpoint' => $dsn->getString('endpoint'),
+            'topic_arns' => $dsn->getArray('topic_arns', [])->toArray(),
+            'http' => $dsn->getArray('http', [])->toArray(),
         ]), function ($value) { return null !== $value; });
     }
 
@@ -144,6 +152,8 @@ class SnsConnectionFactory implements ConnectionFactory
             'version' => '2010-03-31',
             'lazy' => true,
             'endpoint' => null,
+            'topic_arns' => [],
+            'http' => [],
         ];
     }
 }

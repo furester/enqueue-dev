@@ -12,18 +12,19 @@ use Enqueue\Client\Message;
 use Enqueue\Client\MessagePriority;
 use Enqueue\Client\Route;
 use Enqueue\Client\RouteCollection;
+use Enqueue\Stomp\ExtensionType;
 use Enqueue\Stomp\StompContext;
 use Enqueue\Stomp\StompDestination;
 use Enqueue\Stomp\StompMessage;
 use Enqueue\Stomp\StompProducer;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\TestLogger;
 use Interop\Queue\Context;
 use Interop\Queue\Message as InteropMessage;
 use Interop\Queue\Producer as InteropProducer;
 use Interop\Queue\Queue as InteropQueue;
 use Interop\Queue\Topic as InteropTopic;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 
 class RabbitMqStompDriverTest extends TestCase
 {
@@ -47,7 +48,7 @@ class RabbitMqStompDriverTest extends TestCase
 
     public function testShouldCreateAndReturnStompQueueInstance()
     {
-        $expectedQueue = new StompDestination();
+        $expectedQueue = new StompDestination(ExtensionType::RABBITMQ);
 
         $context = $this->createContextMock();
         $context
@@ -185,10 +186,10 @@ class RabbitMqStompDriverTest extends TestCase
 
     public function shouldSendMessageToDelayExchangeIfDelaySet()
     {
-        $queue = new StompDestination();
+        $queue = new StompDestination(ExtensionType::RABBITMQ);
         $queue->setStompName('queueName');
 
-        $delayTopic = new StompDestination();
+        $delayTopic = new StompDestination(ExtensionType::RABBITMQ);
         $delayTopic->setStompName('delayTopic');
 
         $transportMessage = new StompMessage();
@@ -280,14 +281,15 @@ class RabbitMqStompDriverTest extends TestCase
             $this->createManagementClientMock()
         );
 
-        $logger = $this->createLoggerMock();
-        $logger
-            ->expects($this->once())
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Could not setup broker. The option `management_plugin_installed` is not enabled. Please enable that option and install rabbit management plugin')
-        ;
+        $logger = new TestLogger();
 
         $driver->setupBroker($logger);
+
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Could not setup broker. The option `management_plugin_installed` is not enabled. Please enable that option and install rabbit management plugin'
+            )
+        );
     }
 
     public function testShouldSetupBroker()
@@ -339,7 +341,7 @@ class RabbitMqStompDriverTest extends TestCase
             ->expects($this->any())
             ->method('createQueue')
             ->willReturnCallback(function (string $name) {
-                $destination = new StompDestination();
+                $destination = new StompDestination(ExtensionType::RABBITMQ);
                 $destination->setType(StompDestination::TYPE_QUEUE);
                 $destination->setStompName($name);
 
@@ -365,29 +367,30 @@ class RabbitMqStompDriverTest extends TestCase
             $managementClient
         );
 
-        $logger = $this->createLoggerMock();
-        $logger
-            ->expects($this->at(0))
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare router exchange: aprefix.router')
-        ;
-        $logger
-            ->expects($this->at(1))
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare router queue: aprefix.default')
-        ;
-        $logger
-            ->expects($this->at(2))
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Bind router queue to exchange: aprefix.default -> aprefix.router')
-        ;
-        $logger
-            ->expects($this->at(3))
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare processor queue: aprefix.default')
-        ;
+        $logger = new TestLogger();
 
         $driver->setupBroker($logger);
+
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Declare router exchange: aprefix.router'
+            )
+        );
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Declare router queue: aprefix.default'
+            )
+        );
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Bind router queue to exchange: aprefix.default -> aprefix.router'
+            )
+        );
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Declare processor queue: aprefix.default'
+            )
+        );
     }
 
     public function testSetupBrokerShouldCreateDelayExchangeIfEnabled()
@@ -431,7 +434,7 @@ class RabbitMqStompDriverTest extends TestCase
             ->expects($this->any())
             ->method('createQueue')
             ->willReturnCallback(function (string $name) {
-                $destination = new StompDestination();
+                $destination = new StompDestination(ExtensionType::RABBITMQ);
                 $destination->setType(StompDestination::TYPE_QUEUE);
                 $destination->setStompName($name);
 
@@ -442,7 +445,7 @@ class RabbitMqStompDriverTest extends TestCase
             ->expects($this->any())
             ->method('createTopic')
             ->willReturnCallback(function (string $name) {
-                $destination = new StompDestination();
+                $destination = new StompDestination(ExtensionType::RABBITMQ);
                 $destination->setType(StompDestination::TYPE_TOPIC);
                 $destination->setStompName($name);
 
@@ -457,19 +460,20 @@ class RabbitMqStompDriverTest extends TestCase
             $managementClient
         );
 
-        $logger = $this->createLoggerMock();
-        $logger
-            ->expects($this->at(4))
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Declare delay exchange: aprefix.default.delayed')
-        ;
-        $logger
-            ->expects($this->at(5))
-            ->method('debug')
-            ->with('[RabbitMqStompDriver] Bind processor queue to delay exchange: aprefix.default -> aprefix.default.delayed')
-        ;
+        $logger = new TestLogger();
 
         $driver->setupBroker($logger);
+
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Declare delay exchange: aprefix.default.delayed'
+            )
+        );
+        self::assertTrue(
+            $logger->hasDebugThatContains(
+                '[RabbitMqStompDriver] Bind processor queue to delay exchange: aprefix.default -> aprefix.default.delayed'
+            )
+        );
     }
 
     protected function createDriver(...$args): DriverInterface
@@ -503,7 +507,7 @@ class RabbitMqStompDriverTest extends TestCase
      */
     protected function createQueue(string $name): InteropQueue
     {
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setType(StompDestination::TYPE_QUEUE);
         $destination->setStompName($name);
 
@@ -515,7 +519,7 @@ class RabbitMqStompDriverTest extends TestCase
      */
     protected function createTopic(string $name): InteropTopic
     {
-        $destination = new StompDestination();
+        $destination = new StompDestination(ExtensionType::RABBITMQ);
         $destination->setType(StompDestination::TYPE_TOPIC);
         $destination->setStompName($name);
 
@@ -577,18 +581,10 @@ class RabbitMqStompDriverTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createManagementClientMock(): StompManagementClient
     {
         return $this->createMock(StompManagementClient::class);
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|LoggerInterface
-     */
-    private function createLoggerMock()
-    {
-        return $this->createMock(LoggerInterface::class);
     }
 }

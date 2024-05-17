@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Enqueue\Tests;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Enqueue\ConnectionFactoryFactoryInterface;
 use Enqueue\Dbal\ManagerRegistryConnectionFactory;
 use Enqueue\Doctrine\DoctrineConnectionFactoryFactory;
+use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
-class DoctrineConnectionFactoryFactoryTest extends \PHPUnit_Framework_TestCase
+class DoctrineConnectionFactoryFactoryTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var ManagerRegistry|\Prophecy\Prophecy\ObjectProphecy
      */
@@ -24,7 +28,7 @@ class DoctrineConnectionFactoryFactoryTest extends \PHPUnit_Framework_TestCase
      */
     private $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->registry = $this->prophesize(ManagerRegistry::class);
         $this->fallbackFactory = $this->prophesize(ConnectionFactoryFactoryInterface::class);

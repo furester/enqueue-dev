@@ -8,12 +8,13 @@ use Interop\Queue\Spec\SendToTopicAndReceiveNoWaitFromQueueSpec;
 
 /**
  * @group functional
+ * @group gearman
  */
 class GearmanSendToTopicAndReceiveNoWaitFromQueueTest extends SendToTopicAndReceiveNoWaitFromQueueSpec
 {
     private $time;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->time = time();
     }

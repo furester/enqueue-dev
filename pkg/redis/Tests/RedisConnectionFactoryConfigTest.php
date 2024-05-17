@@ -5,6 +5,7 @@ namespace Enqueue\Redis\Tests;
 use Enqueue\Redis\Redis;
 use Enqueue\Redis\RedisConnectionFactory;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,6 +14,7 @@ use PHPUnit\Framework\TestCase;
 class RedisConnectionFactoryConfigTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testThrowNeitherArrayStringNorNullGivenAsConfig()
     {
@@ -47,15 +49,6 @@ class RedisConnectionFactoryConfigTest extends TestCase
 
         $context = $factory->createContext();
         $this->assertSame($redisMock, $context->getRedis());
-    }
-
-    public function testThrowIfRedissConnectionUsedWithPhpRedisExtension()
-    {
-        $factory = new RedisConnectionFactory('rediss+phpredis:?lazy=0');
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The given scheme protocol "rediss" is not supported by php extension. It must be one of "redis", "tcp", "unix"');
-        $factory->createContext();
     }
 
     /**
@@ -202,7 +195,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
             ],
         ];
 
-        //check normal redis connection for php redis extension
+        // check normal redis connection for php redis extension
         yield [
             'redis+phpredis://localhost:1234?foo=bar',
             [
@@ -225,7 +218,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
             ],
         ];
 
-        //check normal redis connection for predis library
+        // check normal redis connection for predis library
         yield [
             'redis+predis://localhost:1234?foo=bar',
             [
@@ -248,7 +241,7 @@ class RedisConnectionFactoryConfigTest extends TestCase
             ],
         ];
 
-        //check tls connection for predis library
+        // check tls connection for predis library
         yield [
             'rediss+predis://localhost:1234?foo=bar&async=1',
             [
@@ -259,6 +252,29 @@ class RedisConnectionFactoryConfigTest extends TestCase
                 'database' => null,
                 'password' => null,
                 'scheme_extensions' => ['predis'],
+                'path' => null,
+                'async' => true,
+                'persistent' => false,
+                'lazy' => true,
+                'read_write_timeout' => null,
+                'predis_options' => null,
+                'ssl' => null,
+                'foo' => 'bar',
+                'redelivery_delay' => 300,
+            ],
+        ];
+
+        // check tls connection for predis library
+        yield [
+            'rediss+phpredis://localhost:1234?foo=bar&async=1',
+            [
+                'host' => 'localhost',
+                'scheme' => 'rediss',
+                'port' => 1234,
+                'timeout' => 5.,
+                'database' => null,
+                'password' => null,
+                'scheme_extensions' => ['phpredis'],
                 'path' => null,
                 'async' => true,
                 'persistent' => false,
@@ -360,7 +376,6 @@ class RedisConnectionFactoryConfigTest extends TestCase
         ];
 
         // from predis doc
-
         yield [
             'tls://127.0.0.1?ssl[cafile]=private.pem&ssl[verify_peer]=1',
             [

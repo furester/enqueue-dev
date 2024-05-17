@@ -13,18 +13,20 @@ use Enqueue\Symfony\Consumption\QueueConsumerOptionsCommandTrait;
 use Interop\Queue\Processor;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand('enqueue:consume')]
 class ConsumeCommand extends Command
 {
-    use LimitsExtensionsCommandTrait;
-    use SetupBrokerExtensionCommandTrait;
-    use QueueConsumerOptionsCommandTrait;
     use ChooseLoggerCommandTrait;
+    use LimitsExtensionsCommandTrait;
+    use QueueConsumerOptionsCommandTrait;
+    use SetupBrokerExtensionCommandTrait;
 
     protected static $defaultName = 'enqueue:consume';
 
@@ -87,7 +89,7 @@ class ConsumeCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $client = $input->getOption('client');
 
@@ -122,11 +124,7 @@ class ConsumeCommand extends Command
             $queues = [];
             foreach ($selectedQueues as $queue) {
                 if (false == array_key_exists($queue, $allQueues)) {
-                    throw new \LogicException(sprintf(
-                        'There is no such queue "%s". Available are "%s"',
-                        $queue,
-                        implode('", "', array_keys($allQueues))
-                    ));
+                    throw new \LogicException(sprintf('There is no such queue "%s". Available are "%s"', $queue, implode('", "', array_keys($allQueues))));
                 }
 
                 $queues[$queue] = $allQueues[$queue];
@@ -147,7 +145,7 @@ class ConsumeCommand extends Command
 
         $consumer->consume(new ChainExtension([$runtimeExtensionChain, $exitStatusExtension]));
 
-        return $exitStatusExtension->getExitStatus();
+        return $exitStatusExtension->getExitStatus() ?? 0;
     }
 
     protected function getRuntimeExtensions(InputInterface $input, OutputInterface $output): ExtensionInterface

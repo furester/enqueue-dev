@@ -9,16 +9,19 @@ use Enqueue\AmqpExt\AmqpSubscriptionConsumer;
 use Enqueue\Null\NullQueue;
 use Enqueue\Null\NullTopic;
 use Enqueue\Test\ClassExtensionTrait;
+use Enqueue\Test\ReadAttributeTrait;
 use Interop\Amqp\Impl\AmqpMessage;
 use Interop\Amqp\Impl\AmqpQueue;
 use Interop\Amqp\Impl\AmqpTopic;
 use Interop\Queue\Context;
 use Interop\Queue\Exception\InvalidDestinationException;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class AmqpContextTest extends TestCase
 {
     use ClassExtensionTrait;
+    use ReadAttributeTrait;
 
     public function testShouldImplementQueueInteropContextInterface()
     {
@@ -243,7 +246,7 @@ class AmqpContextTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\AMQPChannel
+     * @return MockObject|\AMQPChannel
      */
     private function createExtChannelMock()
     {
@@ -251,7 +254,7 @@ class AmqpContextTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|\AMQPChannel
+     * @return MockObject|\AMQPChannel
      */
     private function createExtConnectionMock()
     {
